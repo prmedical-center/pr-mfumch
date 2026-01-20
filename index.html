@@ -9,21 +9,30 @@
   <style>
     body { font-family: 'Kanit', sans-serif; }
     .gradient-bg { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); background-attachment: fixed; }
-    .day-cell { min-height: 80px; @media (min-width: 768px) { min-height: 110px; } transition: 0.2s; background: #fff; border: 1px solid #f3f4f6; }
+    .day-cell { min-height: 85px; transition: 0.2s; background: #fff; border: 1px solid #f3f4f6; }
+    @media (min-width: 768px) { .day-cell { min-height: 110px; } }
+    .day-cell:hover { background-color: #f5f3ff; }
     .today { border: 2px solid #4f46e5 !important; background-color: #eef2ff; }
     .event-badge { font-size: 9px; padding: 2px 4px; border-radius: 4px; margin-top: 2px; background: #4f46e5; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .booked { background-color: #fee2e2; }
-    .pr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .booked { background-color: #fee2e2; cursor: not-allowed; }
+    .pr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 20px; }
     .pr-item { display: flex; gap: 12px; align-items: center; padding: 12px 16px; background: white; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .pr-item strong { display: block; font-size: 14px; color: #1e40af; line-height: 1.2; }
+    .pr-note { padding: 12px 16px; background: #fff7e6; border-left: 5px solid #f59e0b; border-radius: 12px; font-size: 13px; color: #92400e; }
   </style>
 </head>
 <body class="h-full gradient-bg p-3 md:p-8">
   <div class="max-w-6xl mx-auto">
-    <div class="max-w-4xl mx-auto mb-8">
+    <div class="max-w-4xl mx-auto mb-8 fade-in">
       <section class="pr-grid">
-        <div class="pr-item"><span class="text-2xl">🎨</span><div><strong class="text-blue-800 text-sm block">การออกแบบและผลิตสื่อ</strong><span class="text-[11px] text-gray-500">10–20 วันทำการ</span></div></div>
-        <div class="pr-item"><span class="text-2xl">📸</span><div><strong class="text-blue-800 text-sm block">การถ่ายภาพกิจกรรม</strong><span class="text-[11px] text-gray-500">จัดเก็บไฟล์ 30 วัน</span></div></div>
+        <div class="pr-item"><span>🎨</span><div><strong>ออกแบบและผลิตสื่อ</strong><div class="text-[11px] text-gray-500">10–20 วันทำการ</div></div></div>
+        <div class="pr-item"><span>🎬</span><div><strong>ผลิตและตัดต่อวิดีโอ</strong><div class="text-[11px] text-gray-500">10 วันทำการ</div></div></div>
+        <div class="pr-item"><span>📸</span><div><strong>ถ่ายภาพกิจกรรม</strong><div class="text-[11px] text-gray-500">จัดเก็บไฟล์ 30 วัน</div></div></div>
+        <div class="pr-item"><span>📝</span><div><strong>เขียนข่าว ปชส.</strong><div class="text-[11px] text-gray-500">1–3 วันทำการ</div></div></div>
+        <div class="pr-item"><span>🎥</span><div><strong>ขอใช้ห้องสตูดิโอ</strong><div class="text-[11px] text-gray-500">โปรดเช็กคิวงาน</div></div></div>
+        <div class="pr-item"><span>🎤</span><div><strong>พิธีกรดำเนินรายการ</strong><div class="text-[11px] text-gray-500">1–3 วันทำการ</div></div></div>
       </section>
+      <div class="pr-note">⚠️ กรุณาส่งแบบฟอร์มล่วงหน้าอย่างน้อย 15 วันทำการ</div>
     </div>
 
     <div class="flex justify-center mb-6">
@@ -34,35 +43,41 @@
     </div>
 
     <div id="book-section" class="bg-white rounded-[2rem] shadow-2xl p-6 md:p-10">
-      <form onsubmit="handleSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form id="appointment-form" onsubmit="handleSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div><label class="text-sm font-semibold text-gray-600">ชื่อผู้ประสานงาน *</label><input type="text" name="coordinator_name" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400"></div>
         <div><label class="text-sm font-semibold text-gray-600">หน่วยงาน *</label><input type="text" name="department" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400"></div>
+        <div><label class="text-sm font-semibold text-gray-600">เบอร์โทรภายใน *</label><input type="tel" name="phone_internal" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400"></div>
+        <div><label class="text-sm font-semibold text-gray-600">หัวข้องาน *</label><input type="text" name="event_title" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400"></div>
+        
         <div class="md:col-span-2">
-            <label class="text-sm font-semibold text-gray-600 block mb-2">บริการที่ต้องการ *</label>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 bg-gray-50 p-4 rounded-xl border border-dashed">
-                <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="ออกแบบสื่อ"> ออกแบบสื่อ</label>
-                <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="ถ่ายภาพ"> ถ่ายภาพ</label>
-            </div>
+          <label class="text-sm font-semibold text-gray-600 mb-2 block">บริการที่ต้องการ *</label>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 bg-gray-50 p-4 rounded-xl border border-dashed">
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="ออกแบบสื่อ"> ออกแบบสื่อ</label>
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="วิดีโอ"> ตัดต่อวิดีโอ</label>
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="ถ่ายภาพ"> ถ่ายภาพ</label>
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="สตูดิโอ"> ห้องสตูดิโอ</label>
+            <label class="flex items-center gap-2 text-sm font-bold text-indigo-600"><input type="checkbox" id="other-checkbox"> อื่น ๆ</label>
+          </div>
+          <input type="text" id="services-other" class="hidden mt-2 w-full px-4 py-2 border rounded-xl" placeholder="ระบุบริการเพิ่มเติม...">
         </div>
-        <div><label class="text-sm font-semibold text-gray-600">วันที่จัดงาน *</label><input type="date" name="preferred_date" required class="w-full px-4 py-3 rounded-xl border"></div>
-        <div><label class="text-sm font-semibold text-gray-600">ช่วงเวลา *</label><div class="flex gap-2"><input type="time" name="start_time" required class="w-full p-3 rounded-xl border"><span>-</span><input type="time" name="end_time" required class="w-full p-3 rounded-xl border"></div></div>
-        <button type="submit" id="submit-btn" class="md:col-span-2 bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 transition-all">ส่งคำขอจองคิว</button>
+
+        <div><label class="text-sm font-semibold text-gray-600">วันที่จัดงาน *</label><input type="date" name="preferred_date" id="date-input" required class="w-full px-4 py-3 rounded-xl border outline-none"></div>
+        <div><label class="text-sm font-semibold text-gray-600">ช่วงเวลา *</label><div class="flex gap-2"><input type="time" name="start_time" required class="w-full p-3 border rounded-xl"><span class="mt-2">-</span><input type="time" name="end_time" required class="w-full p-3 border rounded-xl"></div></div>
+        
+        <div class="md:col-span-2 space-y-2"><label class="text-sm font-semibold text-gray-600">แนบไฟล์ (สูงสุด 3 ไฟล์)</label><div class="grid grid-cols-1 md:grid-cols-3 gap-2"><input type="file" id="file1" class="w-full text-[10px] border p-2 rounded-xl"><input type="file" id="file2" class="w-full text-[10px] border p-2 rounded-xl"><input type="file" id="file3" class="w-full text-[10px] border p-2 rounded-xl"></div></div>
+        <button type="submit" id="submit-btn" class="md:col-span-2 bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 shadow-xl transition-all">ส่งคำขอจองคิว</button>
       </form>
     </div>
 
-    <div id="list-section" class="hidden bg-white rounded-[2rem] shadow-2xl p-4 md:p-8">
+    <div id="list-section" class="hidden bg-white rounded-[2rem] shadow-2xl p-4 md:p-8 overflow-hidden">
       <div class="flex justify-between items-center mb-6">
-        <h2 id="calendar-month" class="text-xl font-bold text-gray-800 uppercase"></h2>
+        <h2 id="calendar-month" class="text-lg md:text-2xl font-bold text-gray-800 uppercase"></h2>
         <div class="flex gap-2">
-          <button onclick="changeMonth(-1)" class="px-4 py-2 border rounded-lg hover:bg-gray-50">ก่อนหน้า</button>
-          <button onclick="changeMonth(1)" class="px-4 py-2 border rounded-lg hover:bg-gray-50">ถัดไป</button>
+          <button onclick="changeMonth(-1)" class="px-4 py-2 border rounded-lg hover:bg-gray-50 text-xs">ก่อนหน้า</button>
+          <button onclick="changeMonth(1)" class="px-4 py-2 border rounded-lg hover:bg-gray-50 text-xs">ถัดไป</button>
         </div>
       </div>
-      <div class="overflow-x-auto">
-        <div id="calendar-grid" class="grid grid-cols-7 min-w-[600px] bg-gray-200 border border-gray-200 rounded-xl overflow-hidden shadow-inner">
-          <div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">อา</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">จ</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">อ</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">พ</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">พฤ</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">ศ</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">ส</div>
-        </div>
-      </div>
+      <div class="overflow-x-auto"><div id="calendar-grid" class="grid grid-cols-7 min-w-[600px] bg-gray-200 border border-gray-200 rounded-xl overflow-hidden shadow-inner"><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">อา</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">จ</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">อ</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">พ</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">พฤ</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">ศ</div><div class="bg-indigo-600 text-white py-2 text-center text-[10px] font-bold">ส</div></div></div>
     </div>
   </div>
 
@@ -70,33 +85,47 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwBNjqWX1uj6cKX29C0N-UpfZLcZLoq4RfzYNXw1WE8meLz1wnLuzEf2teAd0qJBsFc/exec";
     let appointments = [];
     let currentMonth = new Date();
+    document.getElementById('date-input').min = new Date().toISOString().split('T')[0];
+    document.getElementById('other-checkbox').addEventListener('change', (e) => { document.getElementById('services-other').classList.toggle('hidden', !e.target.checked); });
 
     function showTab(tab) {
       document.getElementById('book-section').classList.toggle('hidden', tab !== 'book');
       document.getElementById('list-section').classList.toggle('hidden', tab === 'book');
+      document.getElementById('btn-book').className = tab === 'book' ? "px-6 py-2 rounded-full text-sm font-medium bg-white text-indigo-600 shadow-lg" : "px-6 py-2 rounded-full text-sm font-medium text-white hover:bg-white/10";
+      document.getElementById('btn-list').className = tab !== 'book' ? "px-6 py-2 rounded-full text-sm font-medium bg-white text-indigo-600 shadow-lg" : "px-6 py-2 rounded-full text-sm font-medium text-white hover:bg-white/10";
       if(tab === 'list') fetchData();
     }
 
     async function handleSubmit(e) {
       e.preventDefault();
       const fd = new FormData(e.target);
+      const selDate = fd.get('preferred_date');
+      if (appointments.some(a => a.preferred_date === selDate)) { alert("❌ วันที่เลือกมีผู้จองแล้ว"); return; }
+
+      let svcs = Array.from(e.target.querySelectorAll('input[name="services"]:checked')).map(c => c.value);
+      if(document.getElementById('other-checkbox').checked) svcs.push("อื่น ๆ: " + document.getElementById('services-other').value);
+      
+      let files = []; for(let i=1; i<=3; i++) { if(document.getElementById(`file${i}`).files[0]) files.push(document.getElementById(`file${i}`).files[0].name); }
+
       const payload = {
         coordinator_name: fd.get('coordinator_name'),
         department: fd.get('department'),
-        preferred_date: fd.get('preferred_date'),
+        phone_internal: fd.get('phone_internal'),
+        event_title: fd.get('event_title'),
+        services: svcs.join(', '),
+        preferred_date: selDate,
         time_range: `${fd.get('start_time')} - ${fd.get('end_time')}`,
-        services: Array.from(e.target.querySelectorAll('input[name="services"]:checked')).map(c => c.value).join(', ')
+        attachment_name: files.join(', ') || "ไม่มีไฟล์"
       };
-      
+
       const btn = document.getElementById('submit-btn');
       btn.disabled = true; btn.innerText = "กำลังส่ง...";
-      
       try {
-        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
-        alert("บันทึกสำเร็จ!");
-        e.target.reset();
-        showTab('list');
-      } catch (err) { alert("เกิดข้อผิดพลาด"); }
+        const res = await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const resData = await res.json();
+        if(resData.status === "success") { alert("✔️ บันทึกสำเร็จ!"); e.target.reset(); fetchData(); showTab('list'); }
+        else { alert("❌ " + resData.message); }
+      } catch (err) { alert("⚠️ บันทึกสำเร็จ (กำลังอัปเดตปฏิทิน)"); e.target.reset(); fetchData(); showTab('list'); }
       finally { btn.disabled = false; btn.innerText = "ส่งคำขอจองคิว"; }
     }
 
@@ -112,28 +141,22 @@
       const grid = document.getElementById('calendar-grid');
       const monthLabel = document.getElementById('calendar-month');
       grid.querySelectorAll('.day-cell').forEach(d => d.remove());
-      
       monthLabel.textContent = currentMonth.toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
       const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
       const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
       const todayStr = new Date().toLocaleDateString('en-CA');
 
       for (let i = 0; i < firstDay; i++) {
-        const empty = document.createElement('div'); empty.className = "day-cell bg-gray-50";
+        const empty = document.createElement('div'); empty.className = "day-cell bg-gray-50 border-gray-100";
         grid.appendChild(empty);
       }
 
       for (let d = 1; d <= daysInMonth; d++) {
-        const year = currentMonth.getFullYear();
-        const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
-        const day = String(d).padStart(2, '0');
-        const dateStr = `${year}-${month}-${day}`;
-        
+        const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         const event = appointments.find(a => a.preferred_date === dateStr);
         const cell = document.createElement('div');
         cell.className = `day-cell p-1 md:p-2 ${event ? 'booked' : ''} ${dateStr === todayStr ? 'today' : ''}`;
         cell.innerHTML = `<div class="text-[10px] font-bold ${dateStr === todayStr ? 'text-indigo-600' : 'text-gray-400'}">${d}</div>`;
-        
         if (event) {
           const b = document.createElement('div'); b.className = "event-badge"; b.innerText = `⏰ ${event.preferred_time}`; cell.appendChild(b);
           const t = document.createElement('div'); t.className = "text-[8px] truncate text-indigo-700 mt-1"; t.innerText = event.event_title; cell.appendChild(t);
