@@ -56,13 +56,20 @@
         
         <div class="md:col-span-2">
           <label class="text-sm font-semibold text-gray-600 mb-2 block">บริการที่ต้องการ *</label>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 bg-gray-50 p-4 rounded-xl border border-dashed">
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="ออกแบบสื่อ"> ออกแบบสื่อ</label>
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="วิดีโอ"> ตัดต่อวิดีโอ</label>
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="ถ่ายภาพ"> ถ่ายภาพ</label>
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="สตูดิโอ"> ห้องสตูดิโอ</label>
-            <label class="flex items-center gap-2 text-sm font-bold text-indigo-600"><input type="checkbox" id="other-checkbox" value="อื่นๆ"> อื่น ๆ</label>
-          </div>
+<div class="md:col-span-2">
+  <label class="block text-sm font-semibold text-gray-600 mb-2">บริการที่ต้องการขอความอนุเคราะห์ *</label>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300">
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="services" value="ออกแบบสื่อ"> ออกแบบสื่อ</label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="services" value="ผลิตสื่อประชาสัมพันธ์"> ผลิตสื่อ ปชส.</label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="services" value="ตัดต่อวิดีโอ"> ตัดต่อวิดีโอ</label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="services" value="ถ่ายภาพกิจกรรม"> ถ่ายภาพกิจกรรม</label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="services" value="ข่าวประชาสัมพันธ์"> ข่าว ปชส.</label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="services" value="ห้องสตูดิโอ"> ห้องสตูดิโอ</label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="services" value="พิธีกร"> พิธีกร</label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer font-bold text-indigo-600">
+      <input type="checkbox" id="other-checkbox" value="อื่นๆ"> อื่น ๆ
+    </label>
+  </div>
           <input type="text" id="services-other" class="hidden mt-2 w-full px-4 py-2 border rounded-xl" placeholder="ระบุบริการเพิ่มเติม...">
         </div>
 
