@@ -23,61 +23,114 @@
       <p id="app-subtitle" class="text-white/80 text-lg">งานสื่อสารองค์กร ฝ่ายทรัพยากรบุคคล</p>
       <p class="text-white/90 text-base mt-3 max-w-3xl mx-auto">โรงพยาบาลศูนย์การแพทย์มหาวิทยาลัยแม่ฟ้าหลวง</p>
     </div>
-<section class="pr-service">
-  <h3 class="pr-title">📋 บริการด้านประชาสัมพันธ์</h3>
-  <ul class="pr-list">
-    <li>การออกแบบและผลิตสื่อประชาสัมพันธ์ (10–20 วันทำการ)</li>
-    <li>การผลิตและตัดต่อวิดีโอ (10 วันทำการ)</li>
-    <li>การถ่ายภาพกิจกรรม (ไฟล์เก็บไว้ 30 วัน)</li>
-    <li>การเขียนข่าวประชาสัมพันธ์ (1–3 วันทำการ)</li>
-    <li>การขอใช้ห้องสตูดิโอ</li>
-    <li>การจัดหาพิธีกรดำเนินรายการ</li>
-    <li>และงานประชาสัมพันธ์อื่น ๆ</li>
-  </ul>
+    
+<section class="pr-grid">
+  <div class="pr-item">
+    <span class="icon">🎨</span>
+    <div>
+      <strong>การออกแบบและผลิตสื่อประชาสัมพันธ์</strong>
+      <div class="time">(10–20 วันทำการ)</div>
+    </div>
+  </div>
 
-  <div class="pr-warning">
-    ⚠️ กรุณาส่งแบบฟอร์มล่วงหน้าอย่างน้อย 15 วันทำการ
+  <div class="pr-item">
+    <span class="icon">🎬</span>
+    <div>
+      <strong>การผลิตและตัดต่อวิดีโอ</strong>
+      <div class="time">(10 วันทำการ)</div>
+    </div>
+  </div>
+
+  <div class="pr-item">
+    <span class="icon">📸</span>
+    <div>
+      <strong>การถ่ายภาพกิจกรรม</strong>
+      <div class="time">(ไฟล์เก็บไว้ 30 วัน)</div>
+    </div>
+  </div>
+
+  <div class="pr-item">
+    <span class="icon">📝</span>
+    <div>
+      <strong>การเขียนข่าวประชาสัมพันธ์</strong>
+      <div class="time">(1–3 วันทำการ)</div>
+    </div>
+  </div>
+
+  <div class="pr-item">
+    <span class="icon">🎥</span>
+    <div>
+      <strong>การขอใช้ห้องสตูดิโอ</strong>
+    </div>
+  </div>
+
+  <div class="pr-item">
+    <span class="icon">🎤</span>
+    <div>
+      <strong>การจัดหาพิธีกรดำเนินรายการ</strong>
+    </div>
+  </div>
+
+  <div class="pr-item">
+    <span class="icon">📣</span>
+    <div>
+      <strong>และงานประชาสัมพันธ์อื่น ๆ</strong>
+    </div>
   </div>
 </section>
 
+<div class="pr-note">
+  ⚠️ กรุณาส่งแบบฟอร์มล่วงหน้าอย่างน้อย 15 วันทำการ
+</div>
+
 <style>
-  .pr-service {
-    max-width: 720px;
-    margin: 0 auto 24px;
-    padding: 20px 22px;
+  .pr-grid {
+    max-width: 760px;
+    margin: 0 auto 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+
+  .pr-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px 16px;
     background: #ffffff;
     border: 1px solid #e1e7ef;
     border-radius: 12px;
   }
 
-  .pr-title {
-    margin: 0 0 12px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #2e71b5;
+  .pr-item .icon {
+    font-size: 22px;
+    line-height: 1;
   }
 
-  .pr-list {
-    padding-left: 18px;
-    margin: 0 0 16px;
-    color: #333;
+  .pr-item strong {
+    display: block;
     font-size: 14px;
-    line-height: 1.7;
+    color: #2e71b5;
+    margin-bottom: 2px;
   }
 
-  .pr-list li {
-    margin-bottom: 6px;
+  .pr-item .time {
+    font-size: 12px;
+    color: #666;
   }
 
-  .pr-warning {
-    padding: 10px 12px;
+  .pr-note {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 10px 14px;
     background: #fff7e6;
     border-left: 4px solid #f0a500;
-    color: #8a5a00;
-    font-size: 13px;
     border-radius: 6px;
+    font-size: 13px;
+    color: #8a5a00;
   }
 </style>
+
   </div><!-- Tabs -->    
     <div class="flex justify-center mb-8">
       <div class="bg-black/20 p-1.5 rounded-full flex gap-2 border border-white/10">
