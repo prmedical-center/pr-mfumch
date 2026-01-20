@@ -243,8 +243,8 @@
           e.target.reset();
           await fetchData();
           showTab('list');
-        } else { alert("❌ " + result.message); }
-      } catch (err) { alert("⚠️ บันทึกสำเร็จ (กำลังอัปเดตตาราง)"); e.target.reset(); await fetchData(); showTab('list');
+        } else { alert("❌ บันทึกไม่สำเร็จ" + result.message); }
+      } catch (err) { alert("⚠️ กรุณารอสักครู่ กำลังอัปเดตตาราง"); e.target.reset(); await fetchData(); showTab('list');
       } finally { btn.disabled = false; spinner.classList.add('hidden'); txt.textContent = "ส่งคำขอจองคิว"; }
     }
 
