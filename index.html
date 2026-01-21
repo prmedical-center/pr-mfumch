@@ -148,12 +148,28 @@
     let appointments = [];
     let currentMonth = new Date();
     
-    // สคริปต์ล็อควันที่เหมือนเดิม
+    // ==========================================
+    // 🔒 ส่วนที่แก้ไข: ล็อควันที่แบบแน่นหนาสำหรับมือถือ
+    // ==========================================
     const todayDate = new Date();
     const yyyy = todayDate.getFullYear();
     const mm = String(todayDate.getMonth() + 1).padStart(2, '0');
     const dd = String(todayDate.getDate()).padStart(2, '0');
-    document.getElementById('date-input').min = `${yyyy}-${mm}-${dd}`;
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+    
+    const dateInput = document.getElementById('date-input');
+    
+    // 1. กำหนดค่า min ตามปกติ
+    dateInput.min = todayStr;
+
+    // 2. (เพิ่มใหม่) ดักจับการเปลี่ยนแปลงค่า เพื่อป้องกันกรณีมือถือหมุนวันที่ย้อนหลังได้
+    dateInput.addEventListener('change', function() {
+        if (this.value && this.value < todayStr) {
+            alert('⚠️ ไม่สามารถเลือกวันที่ย้อนหลังได้ กรุณาเลือกวันปัจจุบันหรือวันถัดไป');
+            this.value = ''; // ล้างค่าทิ้งทันที
+        }
+    });
+    // ==========================================
 
     document.getElementById('other-checkbox').addEventListener('change', (e) => {
       document.getElementById('services-other').classList.toggle('hidden', !e.target.checked);
@@ -171,6 +187,12 @@
       e.preventDefault();
       const fd = new FormData(e.target);
       const selDate = fd.get('preferred_date');
+
+      // ตรวจสอบฝั่ง JS อีกครั้งก่อนส่ง
+      if (selDate < todayStr) {
+          alert("⚠️ วันที่จัดงานต้องไม่เป็นวันที่ย้อนหลัง");
+          return;
+      }
 
       if (appointments.some(a => a.preferred_date === selDate)) {
         alert("❌ วันที่เลือกมีผู้จองแล้ว");
