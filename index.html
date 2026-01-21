@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบจองคิวประชาสัมพันธ์ Ver.2</title>
+  <title>แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์ MFU-MCH</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -39,8 +39,9 @@
   <div class="max-w-6xl mx-auto w-full flex-grow">
     
     <div class="text-center text-white mb-8">
-      <h1 class="text-2xl md:text-4xl font-bold mb-2">ระบบจองคิวประชาสัมพันธ์</h1>
-      <p class="opacity-80 text-lg">งานสื่อสารองค์กร MFU Medical Center</p>
+      <h1 class="text-2xl md:text-4xl font-bold mb-2">แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์</h1>
+      <p class="opacity-80 text-lg">งานสื่อสารองค์กร ฝ่ายทรัพยากรบุคคล
+โรงพยาบาลศูนย์การแพทย์มหาวิทยาลัยแม่ฟ้าหลวง</p>
     </div>
 
     <div class="flex justify-center mb-6 sticky top-2 z-20">
@@ -140,7 +141,7 @@
         </div>
 
         <button type="submit" id="submit-btn" class="md:col-span-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold py-4 rounded-2xl hover:shadow-xl hover:scale-[1.01] transition-all duration-300">
-          🚀 ยืนยันการจองคิว
+          🚀 ยืนยันส่งคำขอ
         </button>
       </form>
     </div>
@@ -324,10 +325,10 @@
             document.getElementById('services-other').classList.add('hidden');
             switchTab('list');
         } catch (err) { 
-            alert("⚠️ ส่งข้อมูลแล้ว (แต่อาจมีดีเลย์)"); 
+            alert("⚠️ ส่งข้อมูลแล้ว ระบบกำลังประมวลผลใน 5-10"); 
             switchTab('list');
         } finally { 
-            btn.disabled = false; btn.innerText = "🚀 ยืนยันการจองคิว"; 
+            btn.disabled = false; btn.innerText = "🚀 ยืนยันดำเนินการส่งคำขอ"; 
         }
     }
 
