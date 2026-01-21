@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์ - MFU MCH</title>
+  <title>แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์ MFU-MCH</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <div id="book-section" class="bg-white rounded-3xl md:rounded-[2rem] shadow-2xl p-6 md:p-10 fade-in">
+    <div id="book-section" class="bg-white rounded-3xl md:rounded-[2rem] shadow-2xl p-5 md:p-10 fade-in">
       <form id="appointment-form" onsubmit="handleSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         
         <div><label class="text-sm font-semibold text-gray-600">ชื่อผู้ประสานงาน *</label><input type="text" name="coordinator_name" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400"></div>
@@ -81,14 +81,17 @@
           <input type="text" id="services-other" class="hidden mt-3 w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-indigo-400 text-sm bg-indigo-50/50" placeholder="โปรดระบุรายละเอียดบริการอื่นๆ...">
         </div>
 
-        <div><label class="text-sm font-semibold text-gray-600">วันที่จัดงาน *</label><input type="date" name="preferred_date" id="date-input" required class="w-full px-4 py-3 rounded-xl border outline-none"></div>
+        <div class="w-full min-w-0">
+            <label class="text-sm font-semibold text-gray-600 mb-1 block">วันที่จัดงาน *</label>
+            <input type="date" name="preferred_date" id="date-input" required class="w-full min-w-0 max-w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400 appearance-none">
+        </div>
         
-        <div>
-            <label class="text-sm font-semibold text-gray-600">ช่วงเวลา *</label>
+        <div class="w-full min-w-0">
+            <label class="text-sm font-semibold text-gray-600 mb-1 block">ช่วงเวลา *</label>
             <div class="flex items-center gap-2">
-                <input type="time" name="start_time" required class="flex-1 p-3 border rounded-xl w-full">
-                <span>-</span>
-                <input type="time" name="end_time" required class="flex-1 p-3 border rounded-xl w-full">
+                <input type="time" name="start_time" required class="flex-1 min-w-0 px-2 md:px-3 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-400 text-center appearance-none">
+                <span class="text-gray-400">-</span>
+                <input type="time" name="end_time" required class="flex-1 min-w-0 px-2 md:px-3 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-400 text-center appearance-none">
             </div>
         </div>
         
@@ -145,14 +148,13 @@
     let appointments = [];
     let currentMonth = new Date();
     
-    // แก้ไข: ล็อควันที่ปัจจุบัน (ใช้ Local Date แทน UTC เพื่อความแม่นยำ)
+    // สคริปต์ล็อควันที่เหมือนเดิม
     const todayDate = new Date();
     const yyyy = todayDate.getFullYear();
     const mm = String(todayDate.getMonth() + 1).padStart(2, '0');
     const dd = String(todayDate.getDate()).padStart(2, '0');
     document.getElementById('date-input').min = `${yyyy}-${mm}-${dd}`;
 
-    // Toggle ช่องบริการอื่นๆ
     document.getElementById('other-checkbox').addEventListener('change', (e) => {
       document.getElementById('services-other').classList.toggle('hidden', !e.target.checked);
     });
@@ -175,7 +177,6 @@
         return;
       }
 
-      // รวมรายการบริการที่เลือก
       let svcs = Array.from(e.target.querySelectorAll('input[name="services"]:checked')).map(c => c.value);
       if(document.getElementById('other-checkbox').checked) {
         const otherTxt = document.getElementById('services-other').value.trim();
