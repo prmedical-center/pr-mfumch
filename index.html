@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์ MFU-MCH</title>
+  <title>แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์ - MFU Medical Center</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -11,12 +11,15 @@
     .gradient-bg { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); background-attachment: fixed; }
     
     /* Responsive Calendar */
-    .day-cell { min-height: 80px; transition: 0.2s; background: #fff; border: 1px solid #f3f4f6; }
+    .day-cell { min-height: 80px; transition: 0.2s; background: #fff; border: 1px solid #f3f4f6; display: flex; flex-direction: column; gap: 2px; }
     @media (min-width: 768px) { .day-cell { min-height: 110px; } }
     .day-cell:hover { background-color: #f5f3ff; }
     .today { border: 2px solid #4f46e5 !important; background-color: #eef2ff; }
-    .event-badge { font-size: 9px; padding: 2px 4px; border-radius: 4px; margin-top: 2px; background: #4f46e5; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .booked { background-color: #fee2e2; }
+    
+    .event-badge { font-size: 8px; padding: 2px 4px; border-radius: 4px; background: #4f46e5; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+    
+    /* สีสำหรับวันที่จองเต็ม 2 สล็อตแล้ว */
+    .fully-booked { background-color: #fee2e2 !important; }
 
     /* PR Grid Info */
     .pr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 20px; }
@@ -108,7 +111,7 @@
         </div>
 
         <button type="submit" id="submit-btn" class="md:col-span-2 bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 shadow-xl transition-all flex justify-center items-center gap-2">
-          <span id="btn-text">ส่งแบบคำขอ</span>
+          <span id="btn-text">ส่งคำขอจองคิว</span>
         </button>
       </form>
     </div>
@@ -132,9 +135,9 @@
         <p class="font-light">โรงพยาบาลศูนย์การแพทย์มหาวิทยาลัยแม่ฟ้าหลวง</p>
         <p class="opacity-75 mt-1 text-xs md:text-sm">365 หมู่ 12 ต.นางแล อ.เมือง จ.เชียงราย 57100</p>
         <div class="flex flex-col md:flex-row justify-center items-center gap-2 md:gap-6 mt-3 text-xs md:text-sm font-medium">
-          <span class="flex items-center gap-1">📞โทร. 0 5391 4199</span>
+          <span class="flex items-center gap-1">📞 053-914-199</span>
           <span class="hidden md:block">|</span>
-          <span class="flex items-center gap-1">✉️E-mail: pr.medical-center@mfu.ac.th</span>
+          <span class="flex items-center gap-1">✉️ pr.medical-center@mfu.ac.th</span>
         </div>
       </div>
     </footer>
@@ -148,9 +151,7 @@
     let appointments = [];
     let currentMonth = new Date();
     
-    // ==========================================
-    // 🔒 ส่วนที่แก้ไข: ล็อควันที่แบบแน่นหนาสำหรับมือถือ
-    // ==========================================
+    // ล็อควันที่ย้อนหลัง
     const todayDate = new Date();
     const yyyy = todayDate.getFullYear();
     const mm = String(todayDate.getMonth() + 1).padStart(2, '0');
@@ -158,18 +159,15 @@
     const todayStr = `${yyyy}-${mm}-${dd}`;
     
     const dateInput = document.getElementById('date-input');
-    
-    // 1. กำหนดค่า min ตามปกติ
     dateInput.min = todayStr;
 
-    // 2. (เพิ่มใหม่) ดักจับการเปลี่ยนแปลงค่า เพื่อป้องกันกรณีมือถือหมุนวันที่ย้อนหลังได้
+    // ระบบดีดกลับ: ถ้ามือถือพยายามเลือกย้อนหลัง ให้แจ้งเตือนและเคลียร์ค่า
     dateInput.addEventListener('change', function() {
         if (this.value && this.value < todayStr) {
             alert('⚠️ ไม่สามารถเลือกวันที่ย้อนหลังได้ กรุณาเลือกวันปัจจุบันหรือวันถัดไป');
-            this.value = ''; // ล้างค่าทิ้งทันที
+            this.value = ''; 
         }
     });
-    // ==========================================
 
     document.getElementById('other-checkbox').addEventListener('change', (e) => {
       document.getElementById('services-other').classList.toggle('hidden', !e.target.checked);
@@ -188,14 +186,16 @@
       const fd = new FormData(e.target);
       const selDate = fd.get('preferred_date');
 
-      // ตรวจสอบฝั่ง JS อีกครั้งก่อนส่ง
+      // ตรวจสอบวันที่ย้อนหลังก่อนส่ง
       if (selDate < todayStr) {
           alert("⚠️ วันที่จัดงานต้องไม่เป็นวันที่ย้อนหลัง");
           return;
       }
 
-      if (appointments.some(a => a.preferred_date === selDate)) {
-        alert("❌ วันที่เลือกมีผู้จองแล้ว");
+      // 🛑 แก้ไข Logic: เช็คจำนวนงานในวันนั้น (สูงสุด 2 งาน)
+      const dailyCount = appointments.filter(a => a.preferred_date === selDate).length;
+      if (dailyCount >= 2) {
+        alert(`❌ วันที่ ${selDate} เต็มแล้ว (รับได้สูงสุด 2 งานต่อวัน)`);
         return;
       }
 
@@ -232,7 +232,7 @@
         alert("✔️ บันทึกสำเร็จ!"); e.target.reset(); document.getElementById('services-other').classList.add('hidden');
         fetchData(); showTab('list');
       } catch (err) { alert("⚠️ ระบบบันทึกแล้ว กำลังอัปเดตปฏิทิน"); }
-      finally { btn.disabled = false; btn.innerText = "ส่งแบบคำขอ"; }
+      finally { btn.disabled = false; btn.innerText = "ส่งคำขอจองคิว"; }
     }
 
     async function fetchData() {
@@ -260,14 +260,26 @@
 
       for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const event = appointments.find(a => a.preferred_date === dateStr);
+        
+        // 🛑 แก้ไข Logic: ดึงรายการทั้งหมดในวันนั้นมาโชว์ (ไม่ใช่แค่รายการแรก)
+        const dailyEvents = appointments.filter(a => a.preferred_date === dateStr);
+        
         const cell = document.createElement('div');
-        cell.className = `day-cell p-1 md:p-2 ${event ? 'booked' : ''} ${dateStr === todayStr ? 'today' : ''}`;
+        // ถ้ามี 2 รายการขึ้นไป ให้ใช้ class fully-booked (สีแดง)
+        const bgClass = (dailyEvents.length >= 2) ? 'fully-booked' : '';
+        const todayClass = (dateStr === todayStr) ? 'today' : '';
+        
+        cell.className = `day-cell p-1 md:p-2 ${bgClass} ${todayClass}`;
         cell.innerHTML = `<div class="text-[10px] font-bold ${dateStr === todayStr ? 'text-indigo-600' : 'text-gray-400'}">${d}</div>`;
-        if (event) {
-          const b = document.createElement('div'); b.className = "event-badge"; b.innerText = `⏰ ${event.preferred_time || event.time_range.split('-')[0]}`; cell.appendChild(b);
-          const t = document.createElement('div'); t.className = "text-[8px] truncate text-indigo-700 mt-1"; t.innerText = event.event_title; cell.appendChild(t);
-        }
+        
+        // Loop สร้าง Badge ตามจำนวนงาน
+        dailyEvents.forEach(event => {
+            const b = document.createElement('div'); 
+            b.className = "event-badge mb-1"; 
+            b.innerHTML = `<span>⏰ ${event.preferred_time || event.time_range.split('-')[0]}</span> <span class="opacity-75">| ${event.event_title}</span>`; 
+            cell.appendChild(b);
+        });
+
         grid.appendChild(cell);
       }
     }
