@@ -3,155 +3,246 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์ - MFU Medical Center</title>
+  <title>ระบบจองคิวประชาสัมพันธ์ Ver.2</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Kanit', sans-serif; }
     .gradient-bg { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); background-attachment: fixed; }
     
-    /* Responsive Calendar */
-    .day-cell { min-height: 80px; transition: 0.2s; background: #fff; border: 1px solid #f3f4f6; display: flex; flex-direction: column; gap: 2px; }
-    @media (min-width: 768px) { .day-cell { min-height: 110px; } }
-    .day-cell:hover { background-color: #f5f3ff; }
+    /* Calendar Styling */
+    .day-cell { min-height: 100px; transition: 0.2s; background: #fff; border: 1px solid #f3f4f6; display: flex; flex-direction: column; gap: 4px; position: relative; }
+    @media (min-width: 768px) { .day-cell { min-height: 120px; } }
+    .day-cell:hover { background-color: #fafaeb; }
     .today { border: 2px solid #4f46e5 !important; background-color: #eef2ff; }
-    
-    .event-badge { font-size: 8px; padding: 2px 4px; border-radius: 4px; background: #4f46e5; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
-    
-    /* สีสำหรับวันที่จองเต็ม 2 สล็อตแล้ว */
-    .fully-booked { background-color: #fee2e2 !important; }
+    .fully-booked { background-color: #fff1f2 !important; } /* แดงอ่อนเมื่อเต็ม */
 
-    /* PR Grid Info */
-    .pr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .pr-item { display: flex; gap: 12px; align-items: center; padding: 12px 16px; background: white; border-radius: 12px; border: 1px solid #e1e7ef; }
-    .pr-item strong { display: block; font-size: 14px; color: #2e71b5; }
-    .pr-note { padding: 10px 14px; background: #fff7e6; border-left: 4px solid #f0a500; border-radius: 6px; font-size: 13px; color: #8a5a00; }
+    /* Event Badge Style */
+    .event-badge { 
+      font-size: 10px; padding: 3px 6px; border-radius: 6px; 
+      color: white; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.1s;
+    }
+    .event-badge:hover { transform: scale(1.02); z-index: 10; }
+
+    /* Modal Animation */
+    #event-modal { transition: opacity 0.3s ease-in-out; }
+    .hidden-modal { opacity: 0; pointer-events: none; }
+    .show-modal { opacity: 1; pointer-events: auto; }
+
+    /* Custom Checkbox Grid */
+    .service-checkbox:checked + div { border-color: #4f46e5; background-color: #eef2ff; }
   </style>
 </head>
 <body class="h-full gradient-bg p-3 md:p-8 flex flex-col min-h-screen">
   <div class="max-w-6xl mx-auto w-full flex-grow">
     
-    <div class="text-center text-white mb-8 fade-in">
-      <h1 class="text-2xl md:text-4xl font-bold mb-2">แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์</h1>
-      <p class="opacity-80 text-lg">งานสื่อสารองค์กร ฝ่ายทรัพยากรบุคคล</p>
-      <p class="text-white/90 text-base mt-1 font-light">โรงพยาบาลศูนย์การแพทย์มหาวิทยาลัยแม่ฟ้าหลวง</p>
+    <div class="text-center text-white mb-8">
+      <h1 class="text-2xl md:text-4xl font-bold mb-2">ระบบจองคิวประชาสัมพันธ์</h1>
+      <p class="opacity-80 text-lg">งานสื่อสารองค์กร MFU Medical Center</p>
     </div>
 
-    <div class="max-w-5xl mx-auto mb-8 fade-in">
-      <section class="pr-grid">
-        <div class="pr-item"><span class="text-2xl">🎨</span><div><strong>ออกแบบและผลิตสื่อ</strong><div class="text-xs text-gray-500">10–20 วันทำการ</div></div></div>
-        <div class="pr-item"><span class="text-2xl">🎬</span><div><strong>ผลิตและตัดต่อวิดีโอ</strong><div class="text-xs text-gray-500">10 วันทำการ</div></div></div>
-        <div class="pr-item"><span class="text-2xl">📸</span><div><strong>ถ่ายภาพกิจกรรม</strong><div class="text-xs text-gray-500">จัดเก็บไฟล์ 30 วัน</div></div></div>
-        <div class="pr-item"><span class="text-2xl">📝</span><div><strong>เขียนข่าว ปชส.</strong><div class="text-xs text-gray-500">1–3 วันทำการ</div></div></div>
-        <div class="pr-item"><span class="text-2xl">🎥</span><div><strong>ขอใช้ห้องสตูดิโอ</strong><div class="text-xs text-gray-500">ตรวจสอบคิวงาน</div></div></div>
-        <div class="pr-item"><span class="text-2xl">🎤</span><div><strong>พิธีกรดำเนินรายการ</strong><div class="text-xs text-gray-500">1–3 วันทำการ</div></div></div>
-        <div class="pr-item"><span class="text-2xl">📡</span><div><strong>บริการ Live กิจกรรม</strong><div class="text-xs text-gray-500">ตรวจสอบคิวงาน</div></div></div>
-        <div class="pr-item"><span class="text-2xl">🎁</span><div><strong>บริการของที่ระลึก</strong><div class="text-xs text-gray-500">ตรวจสอบสต็อก</div></div></div>
-      </section>
-      <div class="pr-note">⚠️ <strong>คำแนะนำ:</strong> กรุณาส่งแบบฟอร์มล่วงหน้าอย่างน้อย 15 วันทำการ</div>
-    </div>
-
-    <div class="flex justify-center mb-6">
-      <div class="bg-black/20 p-1 rounded-full flex gap-1 border border-white/10">
-        <button onclick="showTab('book')" id="btn-book" class="px-6 py-2 rounded-full text-sm font-medium bg-white text-indigo-600 shadow-lg transition-all">ส่งคำขอใหม่</button>
-        <button onclick="showTab('list')" id="btn-list" class="px-6 py-2 rounded-full text-sm font-medium text-white hover:bg-white/10 transition-all">ปฏิทินงาน</button>
+    <div class="flex justify-center mb-6 sticky top-2 z-20">
+      <div class="bg-white/20 backdrop-blur-md p-1.5 rounded-full flex gap-1 border border-white/30 shadow-xl">
+        <button onclick="switchTab('book')" id="btn-book" class="px-5 py-2 rounded-full text-sm font-semibold transition-all bg-white text-indigo-700 shadow-sm">📝 ส่งคำขอ</button>
+        <button onclick="switchTab('list')" id="btn-list" class="px-5 py-2 rounded-full text-sm font-semibold text-white hover:bg-white/10 transition-all">📅 ปฏิทิน</button>
+        <button onclick="switchTab('summary')" id="btn-summary" class="px-5 py-2 rounded-full text-sm font-semibold text-white hover:bg-white/10 transition-all">📊 สรุปงาน</button>
       </div>
     </div>
 
-    <div id="book-section" class="bg-white rounded-3xl md:rounded-[2rem] shadow-2xl p-5 md:p-10 fade-in">
-      <form id="appointment-form" onsubmit="handleSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+    <div id="book-section" class="bg-white rounded-3xl shadow-2xl p-5 md:p-8 fade-in">
+      <form id="appointment-form" onsubmit="handleSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
         
-        <div><label class="text-sm font-semibold text-gray-600">ชื่อผู้ประสานงาน *</label><input type="text" name="coordinator_name" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400"></div>
-        <div><label class="text-sm font-semibold text-gray-600">หน่วยงาน *</label><input type="text" name="department" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400"></div>
-        <div><label class="text-sm font-semibold text-gray-600">เบอร์โทรภายใน *</label><input type="tel" name="phone_internal" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400"></div>
-        <div><label class="text-sm font-semibold text-gray-600">หัวข้องาน *</label><input type="text" name="event_title" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400"></div>
-        
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h3 class="md:col-span-2 text-indigo-600 font-bold flex items-center gap-2">👤 ข้อมูลผู้ขอใช้บริการ</h3>
+          <div><label class="text-xs font-bold text-gray-500">ชื่อผู้ประสานงาน *</label><input type="text" name="coordinator_name" required class="w-full mt-1 px-3 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+          <div><label class="text-xs font-bold text-gray-500">หน่วยงาน *</label><input type="text" name="department" required class="w-full mt-1 px-3 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+          <div><label class="text-xs font-bold text-gray-500">เบอร์โทรภายใน *</label><input type="tel" name="phone_internal" required class="w-full mt-1 px-3 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+          <div><label class="text-xs font-bold text-gray-500">หัวข้องาน *</label><input type="text" name="event_title" required class="w-full mt-1 px-3 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+        </div>
+
         <div class="md:col-span-2">
-          <label class="text-sm font-semibold text-gray-600 mb-2 block">ขอความอนุเคราะห์ประชาสัมพันธ์ (เลือกได้มากกว่า 1 ข้อ) *</label>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-gray-50 p-5 rounded-xl border border-dashed border-gray-300">
-            <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors"><input type="checkbox" name="services" value="บริการถ่ายภาพ" class="mt-1 w-4 h-4 text-indigo-600"><span class="text-sm text-gray-700">บริการถ่ายภาพ (ไฟล์เก็บ 1 เดือน)</span></label>
-            <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors"><input type="checkbox" name="services" value="บริการผลิตและตัดต่อวิดีโอ" class="mt-1 w-4 h-4 text-indigo-600"><span class="text-sm text-gray-700">บริการผลิตและตัดต่อวิดีโอ</span></label>
-            <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors"><input type="checkbox" name="services" value="บริการออกแบบสื่อประชาสัมพันธ์ออนไลน์" class="mt-1 w-4 h-4 text-indigo-600"><span class="text-sm text-gray-700">บริการออกแบบสื่อประชาสัมพันธ์ออนไลน์</span></label>
-            <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors"><input type="checkbox" name="services" value="บริการออกแบบและผลิตสื่อ" class="mt-1 w-4 h-4 text-indigo-600"><span class="text-sm text-gray-700">บริการออกแบบและผลิตสื่อ (ป้าย, แผ่นพับ)</span></label>
-            <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors"><input type="checkbox" name="services" value="บริการเผยแพร่ข่าวประชาสัมพันธ์" class="mt-1 w-4 h-4 text-indigo-600"><span class="text-sm text-gray-700">บริการเผยแพร่ข่าวประชาสัมพันธ์</span></label>
-            <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors"><input type="checkbox" name="services" value="บริการพิธีกร" class="mt-1 w-4 h-4 text-indigo-600"><span class="text-sm text-gray-700">บริการพิธีกร</span></label>
-            <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors"><input type="checkbox" name="services" value="บริการ Live สำหรับจัดกิจกรรม" class="mt-1 w-4 h-4 text-indigo-600"><span class="text-sm text-gray-700">บริการ Live สำหรับจัดกิจกรรม</span></label>
-            <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors"><input type="checkbox" name="services" value="บริการของที่ระลึก" class="mt-1 w-4 h-4 text-indigo-600"><span class="text-sm text-gray-700">บริการของที่ระลึก</span></label>
-            <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors md:col-span-2 border-t border-gray-200 mt-1 pt-3">
-              <input type="checkbox" id="other-checkbox" value="อื่นๆ" class="mt-1 w-4 h-4 text-indigo-600"><span class="text-sm font-semibold text-indigo-700">บริการอื่นๆ (ระบุบริการอื่นๆ)</span>
+          <label class="font-bold text-gray-700 mb-2 block">🛠️ เลือกบริการ (เลือกได้มากกว่า 1 ข้อ)</label>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <label class="cursor-pointer group relative">
+              <input type="checkbox" name="services" value="ถ่ายภาพ" class="service-checkbox peer sr-only">
+              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
+                <span class="text-2xl">📸</span><span class="text-xs font-bold text-gray-600">ถ่ายภาพ</span>
+                <div class="w-full h-1 rounded-full bg-blue-500 mt-1"></div>
+              </div>
+            </label>
+            <label class="cursor-pointer group relative">
+              <input type="checkbox" name="services" value="วิดีโอ" class="service-checkbox peer sr-only">
+              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
+                <span class="text-2xl">🎬</span><span class="text-xs font-bold text-gray-600">วิดีโอ</span>
+                <div class="w-full h-1 rounded-full bg-red-500 mt-1"></div>
+              </div>
+            </label>
+            <label class="cursor-pointer group relative">
+              <input type="checkbox" name="services" value="กราฟิก" class="service-checkbox peer sr-only">
+              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
+                <span class="text-2xl">🎨</span><span class="text-xs font-bold text-gray-600">กราฟิก</span>
+                <div class="w-full h-1 rounded-full bg-orange-400 mt-1"></div>
+              </div>
+            </label>
+            <label class="cursor-pointer group relative">
+              <input type="checkbox" name="services" value="เขียนข่าว" class="service-checkbox peer sr-only">
+              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
+                <span class="text-2xl">📝</span><span class="text-xs font-bold text-gray-600">เขียนข่าว</span>
+                <div class="w-full h-1 rounded-full bg-green-500 mt-1"></div>
+              </div>
+            </label>
+            <label class="cursor-pointer group relative">
+              <input type="checkbox" name="services" value="พิธีกร" class="service-checkbox peer sr-only">
+              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
+                <span class="text-2xl">🎤</span><span class="text-xs font-bold text-gray-600">พิธีกร</span>
+                <div class="w-full h-1 rounded-full bg-purple-500 mt-1"></div>
+              </div>
+            </label>
+            <label class="cursor-pointer group relative">
+              <input type="checkbox" name="services" value="Live" class="service-checkbox peer sr-only">
+              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
+                <span class="text-2xl">📡</span><span class="text-xs font-bold text-gray-600">Live</span>
+                <div class="w-full h-1 rounded-full bg-rose-600 mt-1"></div>
+              </div>
+            </label>
+            <label class="cursor-pointer group relative">
+              <input type="checkbox" name="services" value="ของที่ระลึก" class="service-checkbox peer sr-only">
+              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
+                <span class="text-2xl">🎁</span><span class="text-xs font-bold text-gray-600">ของที่ระลึก</span>
+                <div class="w-full h-1 rounded-full bg-pink-400 mt-1"></div>
+              </div>
+            </label>
+            <label class="cursor-pointer group relative">
+              <input type="checkbox" id="other-checkbox" value="อื่นๆ" class="peer sr-only">
+              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
+                <span class="text-2xl">✨</span><span class="text-xs font-bold text-gray-600">อื่นๆ</span>
+                <div class="w-full h-1 rounded-full bg-gray-400 mt-1"></div>
+              </div>
             </label>
           </div>
-          <input type="text" id="services-other" class="hidden mt-3 w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-indigo-400 text-sm bg-indigo-50/50" placeholder="โปรดระบุรายละเอียดบริการอื่นๆ...">
+          <input type="text" id="services-other" class="hidden mt-3 w-full px-4 py-2 rounded-xl border border-gray-300 text-sm bg-gray-50" placeholder="ระบุบริการอื่นๆ...">
         </div>
 
         <div class="w-full min-w-0">
-            <label class="text-sm font-semibold text-gray-600 mb-1 block">วันที่จัดงาน *</label>
-            <input type="date" name="preferred_date" id="date-input" required class="w-full min-w-0 max-w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400 appearance-none">
+            <label class="text-sm font-bold text-gray-600 mb-1 block">📅 วันที่จัดงาน *</label>
+            <input type="date" name="preferred_date" id="date-input" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400 appearance-none bg-white">
         </div>
         
         <div class="w-full min-w-0">
-            <label class="text-sm font-semibold text-gray-600 mb-1 block">ช่วงเวลา *</label>
+            <label class="text-sm font-bold text-gray-600 mb-1 block">⏰ ช่วงเวลา *</label>
             <div class="flex items-center gap-2">
-                <input type="time" name="start_time" required class="flex-1 min-w-0 px-2 md:px-3 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-400 text-center appearance-none">
-                <span class="text-gray-400">-</span>
-                <input type="time" name="end_time" required class="flex-1 min-w-0 px-2 md:px-3 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-400 text-center appearance-none">
+                <input type="time" name="start_time" required class="flex-1 min-w-0 px-2 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-400 text-center bg-white appearance-none">
+                <span class="text-gray-400 font-bold">-</span>
+                <input type="time" name="end_time" required class="flex-1 min-w-0 px-2 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-400 text-center bg-white appearance-none">
             </div>
         </div>
-        
-        <div class="md:col-span-2 space-y-2 bg-gray-50 p-4 rounded-xl border border-gray-200">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-            <label class="text-sm font-semibold text-gray-700">ไฟล์เอกสารแนบ (ถ้ามี) - แนบได้สูงสุด 3 ไฟล์</label>
-            <span class="text-[11px] text-gray-500 bg-white px-2 py-1 rounded border">รองรับไฟล์: PDF, DOC, DOCX, JPG, PNG</span>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
-            <input type="file" id="file1" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="w-full text-[11px] text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 border bg-white rounded-lg p-1">
-            <input type="file" id="file2" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="w-full text-[11px] text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 border bg-white rounded-lg p-1">
-            <input type="file" id="file3" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="w-full text-[11px] text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 border bg-white rounded-lg p-1">
-          </div>
-        </div>
 
-        <button type="submit" id="submit-btn" class="md:col-span-2 bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 shadow-xl transition-all flex justify-center items-center gap-2">
-          <span id="btn-text">ส่งคำขอจองคิว</span>
+        <button type="submit" id="submit-btn" class="md:col-span-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold py-4 rounded-2xl hover:shadow-xl hover:scale-[1.01] transition-all duration-300">
+          🚀 ยืนยันการจองคิว
         </button>
       </form>
     </div>
 
-    <div id="list-section" class="hidden bg-white rounded-3xl md:rounded-[2rem] shadow-2xl p-4 md:p-8 overflow-hidden">
+    <div id="list-section" class="hidden bg-white rounded-3xl shadow-2xl p-4 md:p-8">
       <div class="flex justify-between items-center mb-6">
         <h2 id="calendar-month" class="text-xl font-bold text-gray-800 uppercase"></h2>
         <div class="flex gap-2">
-          <button onclick="changeMonth(-1)" class="px-4 py-2 border rounded-lg hover:bg-gray-50 text-xs">ก่อนหน้า</button>
-          <button onclick="changeMonth(1)" class="px-4 py-2 border rounded-lg hover:bg-gray-50 text-xs">ถัดไป</button>
+          <button onclick="changeMonth(-1)" class="px-3 py-1 border rounded hover:bg-gray-100">◀</button>
+          <button onclick="changeMonth(1)" class="px-3 py-1 border rounded hover:bg-gray-100">▶</button>
         </div>
       </div>
-      <div class="overflow-x-auto">
-        <div id="calendar-grid" class="grid grid-cols-7 min-w-[600px] bg-gray-200 border border-gray-200 rounded-xl overflow-hidden"></div>
+      <div class="overflow-x-auto pb-2">
+        <div id="calendar-grid" class="grid grid-cols-7 min-w-[700px] border rounded-xl overflow-hidden shadow-sm"></div>
+      </div>
+      <div class="mt-4 flex gap-4 text-xs text-gray-500 flex-wrap justify-center">
+        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-blue-500 rounded-full"></div>ถ่ายภาพ</div>
+        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-red-500 rounded-full"></div>วิดีโอ</div>
+        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-orange-400 rounded-full"></div>กราฟิก</div>
+        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-green-500 rounded-full"></div>ข่าว</div>
       </div>
     </div>
 
-    <footer class="mt-12 mb-6 text-center text-white/80 text-sm">
-      <div class="border-t border-white/20 pt-6 max-w-4xl mx-auto">
-        <p class="font-semibold text-base mb-1">งานสื่อสารองค์กร</p>
-        <p class="font-light">โรงพยาบาลศูนย์การแพทย์มหาวิทยาลัยแม่ฟ้าหลวง</p>
-        <p class="opacity-75 mt-1 text-xs md:text-sm">365 หมู่ 12 ต.นางแล อ.เมือง จ.เชียงราย 57100</p>
-        <div class="flex flex-col md:flex-row justify-center items-center gap-2 md:gap-6 mt-3 text-xs md:text-sm font-medium">
-          <span class="flex items-center gap-1">📞 053-914-199</span>
-          <span class="hidden md:block">|</span>
-          <span class="flex items-center gap-1">✉️ pr.medical-center@mfu.ac.th</span>
+    <div id="summary-section" class="hidden bg-white rounded-3xl shadow-2xl p-6 md:p-10">
+      <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <h2 class="text-2xl font-bold text-gray-800">📊 สรุปสถิติงานประชาสัมพันธ์</h2>
+        <div class="flex gap-2">
+            <select id="chart-month" class="border rounded-lg px-3 py-2 text-sm bg-gray-50" onchange="renderCharts()">
+                <option value="all">ทุกเดือน</option>
+                <option value="1">มกราคม</option><option value="2">กุมภาพันธ์</option><option value="3">มีนาคม</option>
+                <option value="4">เมษายน</option><option value="5">พฤษภาคม</option><option value="6">มิถุนายน</option>
+                <option value="7">กรกฎาคม</option><option value="8">สิงหาคม</option><option value="9">กันยายน</option>
+                <option value="10">ตุลาคม</option><option value="11">พฤศจิกายน</option><option value="12">ธันวาคม</option>
+            </select>
+            <select id="chart-year" class="border rounded-lg px-3 py-2 text-sm bg-gray-50" onchange="renderCharts()"></select>
         </div>
       </div>
-    </footer>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 class="text-center font-bold text-gray-600 mb-4">🏆 สัดส่วนประเภทงานบริการ</h3>
+            <canvas id="serviceChart"></canvas>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 class="text-center font-bold text-gray-600 mb-4">🏢 หน่วยงานที่ขอใช้บริการสูงสุด</h3>
+            <canvas id="deptChart"></canvas>
+        </div>
+      </div>
+    </div>
 
   </div>
 
+  <div id="event-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden-modal">
+    <div class="bg-white w-full max-w-md mx-4 rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-100">
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 text-white flex justify-between items-center">
+            <h3 class="font-bold text-lg">📌 รายละเอียดงาน</h3>
+            <button onclick="closeModal()" class="text-white/80 hover:text-white text-2xl">&times;</button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div><label class="text-xs text-gray-400 uppercase font-bold">หัวข้องาน</label><p id="m-title" class="text-lg font-semibold text-indigo-700">-</p></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div><label class="text-xs text-gray-400 uppercase font-bold">วันที่</label><p id="m-date" class="font-medium">-</p></div>
+                <div><label class="text-xs text-gray-400 uppercase font-bold">เวลา</label><p id="m-time" class="font-medium">-</p></div>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-lg border">
+                <div><label class="text-xs text-gray-400 uppercase font-bold">ผู้ประสานงาน</label><p id="m-name" class="font-medium text-gray-800">-</p></div>
+                <div class="mt-2"><label class="text-xs text-gray-400 uppercase font-bold">หน่วยงาน</label><p id="m-dept" class="font-medium text-gray-800">-</p></div>
+                <div class="mt-2"><label class="text-xs text-gray-400 uppercase font-bold">เบอร์โทร</label><p id="m-phone" class="font-medium text-gray-800">-</p></div>
+            </div>
+            <div>
+                <label class="text-xs text-gray-400 uppercase font-bold">บริการที่ขอ</label>
+                <div id="m-services" class="flex flex-wrap gap-2 mt-1"></div>
+            </div>
+        </div>
+        <div class="p-4 border-t bg-gray-50 text-center">
+            <button onclick="closeModal()" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-full text-sm font-bold text-gray-700">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+  </div>
+
   <script>
-    // ⚠️ ใส่ WEB_APP_URL ของคุณที่นี่
+    // ⚠️ ใส่ WEB_APP_URL
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwBNjqWX1uj6cKX29C0N-UpfZLcZLoq4RfzYNXw1WE8meLz1wnLuzEf2teAd0qJBsFc/exec";
     
+    // --- Configuration: สีประจำบริการ ---
+    const serviceColors = {
+        'ถ่ายภาพ': '#3b82f6', // Blue
+        'วิดีโอ': '#ef4444', // Red
+        'กราฟิก': '#f97316', // Orange
+        'เขียนข่าว': '#22c55e', // Green
+        'พิธีกร': '#a855f7', // Purple
+        'Live': '#e11d48', // Rose
+        'ของที่ระลึก': '#ec4899', // Pink
+        'อื่นๆ': '#64748b' // Gray
+    };
+
     let appointments = [];
     let currentMonth = new Date();
-    
-    // ล็อควันที่ย้อนหลัง
+    let serviceChartInstance = null;
+    let deptChartInstance = null;
+
+    // --- Date Locking & Setup ---
     const todayDate = new Date();
     const yyyy = todayDate.getFullYear();
     const mm = String(todayDate.getMonth() + 1).padStart(2, '0');
@@ -160,130 +251,237 @@
     
     const dateInput = document.getElementById('date-input');
     dateInput.min = todayStr;
-
-    // ระบบดีดกลับ: ถ้ามือถือพยายามเลือกย้อนหลัง ให้แจ้งเตือนและเคลียร์ค่า
     dateInput.addEventListener('change', function() {
         if (this.value && this.value < todayStr) {
-            alert('⚠️ ไม่สามารถเลือกวันที่ย้อนหลังได้ กรุณาเลือกวันปัจจุบันหรือวันถัดไป');
-            this.value = ''; 
+            alert('⚠️ ไม่สามารถเลือกวันที่ย้อนหลังได้'); this.value = ''; 
         }
     });
 
-    document.getElementById('other-checkbox').addEventListener('change', (e) => {
-      document.getElementById('services-other').classList.toggle('hidden', !e.target.checked);
-    });
-
-    function showTab(tab) {
-      document.getElementById('book-section').classList.toggle('hidden', tab !== 'book');
-      document.getElementById('list-section').classList.toggle('hidden', tab === 'book');
-      document.getElementById('btn-book').className = tab === 'book' ? "px-6 py-2 rounded-full text-sm font-medium bg-white text-indigo-600 shadow-lg" : "px-6 py-2 rounded-full text-sm font-medium text-white hover:bg-white/10";
-      document.getElementById('btn-list').className = tab !== 'book' ? "px-6 py-2 rounded-full text-sm font-medium bg-white text-indigo-600 shadow-lg" : "px-6 py-2 rounded-full text-sm font-medium text-white hover:bg-white/10";
-      if(tab === 'list') fetchData();
+    // Populate Year Select for Charts
+    const yearSelect = document.getElementById('chart-year');
+    for(let i=yyyy; i>=yyyy-2; i--) {
+        const opt = document.createElement('option');
+        opt.value = i; opt.text = i;
+        yearSelect.add(opt);
     }
 
+    // Toggle Other Checkbox
+    document.getElementById('other-checkbox').addEventListener('change', (e) => {
+        document.getElementById('services-other').classList.toggle('hidden', !e.target.checked);
+    });
+
+    // --- Tab Switching ---
+    function switchTab(tab) {
+        ['book', 'list', 'summary'].forEach(t => {
+            document.getElementById(`${t}-section`).classList.toggle('hidden', t !== tab);
+            const btn = document.getElementById(`btn-${t}`);
+            if(t === tab) {
+                btn.className = "px-5 py-2 rounded-full text-sm font-semibold transition-all bg-white text-indigo-700 shadow-sm transform scale-105";
+            } else {
+                btn.className = "px-5 py-2 rounded-full text-sm font-semibold text-white hover:bg-white/10 transition-all";
+            }
+        });
+        if(tab === 'list') { fetchData(); }
+        if(tab === 'summary') { fetchData().then(() => renderCharts()); }
+    }
+
+    // --- Form Submission ---
     async function handleSubmit(e) {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const selDate = fd.get('preferred_date');
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const selDate = fd.get('preferred_date');
 
-      // ตรวจสอบวันที่ย้อนหลังก่อนส่ง
-      if (selDate < todayStr) {
-          alert("⚠️ วันที่จัดงานต้องไม่เป็นวันที่ย้อนหลัง");
-          return;
-      }
+        if (selDate < todayStr) { alert("⚠️ ห้ามย้อนหลัง"); return; }
 
-      // 🛑 แก้ไข Logic: เช็คจำนวนงานในวันนั้น (สูงสุด 2 งาน)
-      const dailyCount = appointments.filter(a => a.preferred_date === selDate).length;
-      if (dailyCount >= 2) {
-        alert(`❌ วันที่ ${selDate} เต็มแล้ว (รับได้สูงสุด 2 งานต่อวัน)`);
-        return;
-      }
+        const dailyCount = appointments.filter(a => a.preferred_date === selDate).length;
+        if (dailyCount >= 2) { alert(`❌ วันที่ ${selDate} เต็มแล้ว (2/2)`); return; }
 
-      let svcs = Array.from(e.target.querySelectorAll('input[name="services"]:checked')).map(c => c.value);
-      if(document.getElementById('other-checkbox').checked) {
-        const otherTxt = document.getElementById('services-other').value.trim();
-        if(otherTxt) svcs.push("อื่นๆ: " + otherTxt);
-        else svcs.push("อื่นๆ (ไม่ระบุ)");
-      }
-      
-      if(svcs.length === 0) { alert("กรุณาเลือกบริการอย่างน้อย 1 ข้อ"); return; }
+        let svcs = Array.from(e.target.querySelectorAll('input[name="services"]:checked')).map(c => c.value);
+        if(document.getElementById('other-checkbox').checked) {
+            const otherTxt = document.getElementById('services-other').value.trim();
+            svcs.push(otherTxt ? `อื่นๆ (${otherTxt})` : "อื่นๆ");
+        }
+        if(svcs.length === 0) { alert("เลือกบริการอย่างน้อย 1 ข้อ"); return; }
 
-      let files = []; 
-      for(let i=1; i<=3; i++) { 
-        if(document.getElementById(`file${i}`).files[0]) files.push(document.getElementById(`file${i}`).files[0].name); 
-      }
+        const payload = {
+            coordinator_name: fd.get('coordinator_name'),
+            department: fd.get('department'),
+            phone_internal: fd.get('phone_internal'),
+            event_title: fd.get('event_title'),
+            services: svcs.join(', '),
+            preferred_date: selDate,
+            time_range: `${fd.get('start_time')} - ${fd.get('end_time')}`,
+            attachment_name: "No File" // Demo purpose
+        };
 
-      const payload = {
-        coordinator_name: fd.get('coordinator_name'),
-        department: fd.get('department'),
-        phone_internal: fd.get('phone_internal'),
-        event_title: fd.get('event_title'),
-        services: svcs.join(', '),
-        location: "โรงพยาบาลศูนย์การแพทย์",
-        preferred_date: selDate,
-        time_range: `${fd.get('start_time')} - ${fd.get('end_time')}`,
-        attachment_name: files.join(', ') || "ไม่มีไฟล์"
-      };
-
-      const btn = document.getElementById('submit-btn');
-      btn.disabled = true; btn.innerText = "กำลังส่ง...";
-      try {
-        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
-        alert("✔️ บันทึกสำเร็จ!"); e.target.reset(); document.getElementById('services-other').classList.add('hidden');
-        fetchData(); showTab('list');
-      } catch (err) { alert("⚠️ ระบบบันทึกแล้ว กำลังอัปเดตปฏิทิน"); }
-      finally { btn.disabled = false; btn.innerText = "ส่งคำขอจองคิว"; }
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true; btn.innerText = "⏳ กำลังบันทึก...";
+        
+        try {
+            await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
+            alert("✅ บันทึกสำเร็จ!"); 
+            e.target.reset(); 
+            document.getElementById('services-other').classList.add('hidden');
+            switchTab('list');
+        } catch (err) { 
+            alert("⚠️ ส่งข้อมูลแล้ว (แต่อาจมีดีเลย์)"); 
+            switchTab('list');
+        } finally { 
+            btn.disabled = false; btn.innerText = "🚀 ยืนยันการจองคิว"; 
+        }
     }
 
     async function fetchData() {
-      try {
-        const res = await fetch(WEB_APP_URL);
-        appointments = await res.json();
-        renderCalendar();
-      } catch (err) { console.error("Fetch error"); }
+        try {
+            const res = await fetch(WEB_APP_URL);
+            appointments = await res.json();
+            renderCalendar();
+        } catch (err) { console.error("Fetch Error"); }
     }
 
+    // --- Gradient & Color Logic ---
+    function getGradientStyle(serviceString) {
+        const services = serviceString.split(',').map(s => s.trim().split(' ')[0]); // เอาแค่คำแรก
+        let colors = services.map(s => serviceColors[s] || serviceColors['อื่นๆ']);
+        
+        if (colors.length === 0) return 'background: #64748b';
+        if (colors.length === 1) return `background: ${colors[0]}`;
+        
+        return `background: linear-gradient(135deg, ${colors.join(', ')})`;
+    }
+
+    // --- Calendar Rendering ---
     function renderCalendar() {
-      const grid = document.getElementById('calendar-grid');
-      const monthLabel = document.getElementById('calendar-month');
-      grid.innerHTML = '<div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold uppercase">อา</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold uppercase">จ</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold uppercase">อ</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold uppercase">พ</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold uppercase">พฤ</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold uppercase">ศ</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold uppercase">เส</div>';
-      
-      monthLabel.textContent = currentMonth.toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
-      const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
-      const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
-      const todayStr = new Date().toLocaleDateString('en-CA');
+        const grid = document.getElementById('calendar-grid');
+        const monthLabel = document.getElementById('calendar-month');
+        grid.innerHTML = '<div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold">อา</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold">จ</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold">อ</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold">พ</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold">พฤ</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold">ศ</div><div class="bg-indigo-600 text-white py-2 text-center text-xs font-bold">เส</div>';
+        
+        monthLabel.textContent = currentMonth.toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
+        const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
+        const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
 
-      for (let i = 0; i < firstDay; i++) {
-        const empty = document.createElement('div'); empty.className = "day-cell bg-gray-50";
-        grid.appendChild(empty);
-      }
+        for (let i = 0; i < firstDay; i++) { grid.appendChild(document.createElement('div')); } // Empty slots
 
-      for (let d = 1; d <= daysInMonth; d++) {
-        const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        
-        // 🛑 แก้ไข Logic: ดึงรายการทั้งหมดในวันนั้นมาโชว์ (ไม่ใช่แค่รายการแรก)
-        const dailyEvents = appointments.filter(a => a.preferred_date === dateStr);
-        
-        const cell = document.createElement('div');
-        // ถ้ามี 2 รายการขึ้นไป ให้ใช้ class fully-booked (สีแดง)
-        const bgClass = (dailyEvents.length >= 2) ? 'fully-booked' : '';
-        const todayClass = (dateStr === todayStr) ? 'today' : '';
-        
-        cell.className = `day-cell p-1 md:p-2 ${bgClass} ${todayClass}`;
-        cell.innerHTML = `<div class="text-[10px] font-bold ${dateStr === todayStr ? 'text-indigo-600' : 'text-gray-400'}">${d}</div>`;
-        
-        // Loop สร้าง Badge ตามจำนวนงาน
-        dailyEvents.forEach(event => {
-            const b = document.createElement('div'); 
-            b.className = "event-badge mb-1"; 
-            b.innerHTML = `<span>⏰ ${event.preferred_time || event.time_range.split('-')[0]}</span> <span class="opacity-75">| ${event.event_title}</span>`; 
-            cell.appendChild(b);
-        });
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const dailyEvents = appointments.filter(a => a.preferred_date === dateStr);
+            
+            const cell = document.createElement('div');
+            const bgClass = (dailyEvents.length >= 2) ? 'fully-booked' : '';
+            const todayClass = (dateStr === todayStr) ? 'today' : '';
+            cell.className = `day-cell p-1 md:p-2 ${bgClass} ${todayClass}`;
+            
+            cell.innerHTML = `<div class="text-xs font-bold text-gray-400 flex justify-between">${d} ${dailyEvents.length>=2 ?'<span class="text-red-500 text-[9px]">เต็ม</span>':''}</div>`;
+            
+            dailyEvents.forEach((event, idx) => {
+                const b = document.createElement('div');
+                b.className = "event-badge";
+                b.style = getGradientStyle(event.services); // 🔥 ใส่สีตามบริการ
+                b.innerHTML = `⏰ ${event.preferred_time || event.time_range.split('-')[0]} | ${event.event_title}`;
+                
+                // Add Click Event for Modal
+                b.onclick = (e) => { e.stopPropagation(); openModal(event); };
+                cell.appendChild(b);
+            });
 
-        grid.appendChild(cell);
-      }
+            grid.appendChild(cell);
+        }
     }
     function changeMonth(s) { currentMonth.setMonth(currentMonth.getMonth() + s); renderCalendar(); }
+
+    // --- Modal Functions ---
+    const modal = document.getElementById('event-modal');
+    function openModal(data) {
+        document.getElementById('m-title').innerText = data.event_title;
+        document.getElementById('m-date').innerText = new Date(data.preferred_date).toLocaleDateString('th-TH', {dateStyle:'long'});
+        document.getElementById('m-time').innerText = data.time_range || data.preferred_time;
+        document.getElementById('m-name').innerText = data.coordinator_name;
+        document.getElementById('m-dept').innerText = data.department;
+        document.getElementById('m-phone').innerText = data.phone_internal;
+        
+        // Render Service Tags
+        const svcsDiv = document.getElementById('m-services');
+        svcsDiv.innerHTML = '';
+        data.services.split(',').forEach(s => {
+            const span = document.createElement('span');
+            const key = s.trim().split(' ')[0];
+            span.className = "text-[10px] text-white px-2 py-1 rounded shadow-sm";
+            span.style.backgroundColor = serviceColors[key] || '#64748b';
+            span.innerText = s.trim();
+            svcsDiv.appendChild(span);
+        });
+
+        modal.classList.remove('hidden-modal');
+        modal.classList.add('show-modal');
+    }
+    function closeModal() {
+        modal.classList.remove('show-modal');
+        modal.classList.add('hidden-modal');
+    }
+
+    // --- Charts Logic ---
+    function renderCharts() {
+        const selMonth = document.getElementById('chart-month').value;
+        const selYear = document.getElementById('chart-year').value;
+
+        // Filter Data
+        const filtered = appointments.filter(a => {
+            const d = new Date(a.preferred_date);
+            const mMatch = selMonth === 'all' || (d.getMonth() + 1) == selMonth;
+            const yMatch = d.getFullYear() == selYear;
+            return mMatch && yMatch;
+        });
+
+        // 1. Service Stats
+        const svcStats = {};
+        filtered.forEach(a => {
+            a.services.split(',').forEach(s => {
+                const key = s.trim().split(' ')[0]; // Group by main keyword
+                svcStats[key] = (svcStats[key] || 0) + 1;
+            });
+        });
+
+        // 2. Department Stats
+        const deptStats = {};
+        filtered.forEach(a => {
+            deptStats[a.department] = (deptStats[a.department] || 0) + 1;
+        });
+
+        // Destroy old charts if exist
+        if(serviceChartInstance) serviceChartInstance.destroy();
+        if(deptChartInstance) deptChartInstance.destroy();
+
+        // Draw Service Chart (Doughnut)
+        const ctx1 = document.getElementById('serviceChart').getContext('2d');
+        serviceChartInstance = new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(svcStats),
+                datasets: [{
+                    data: Object.values(svcStats),
+                    backgroundColor: Object.keys(svcStats).map(k => serviceColors[k] || '#ccc')
+                }]
+            }
+        });
+
+        // Draw Dept Chart (Bar)
+        const ctx2 = document.getElementById('deptChart').getContext('2d');
+        deptChartInstance = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(deptStats),
+                datasets: [{
+                    label: 'จำนวนงาน',
+                    data: Object.values(deptStats),
+                    backgroundColor: '#4f46e5',
+                    borderRadius: 5
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true, ticks: {stepSize:1} } } }
+        });
+    }
+
+    // Init
     fetchData();
   </script>
 </body>
