@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์ MFU-MCH</title>
+  <title>ระบบจองคิวประชาสัมพันธ์ MFU</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -16,9 +16,9 @@
     @media (min-width: 768px) { .day-cell { min-height: 120px; } }
     .day-cell:hover { background-color: #fafaeb; }
     .today { border: 2px solid #4f46e5 !important; background-color: #eef2ff; }
-    .fully-booked { background-color: #fff1f2 !important; } /* แดงอ่อนเมื่อเต็ม */
+    .fully-booked { background-color: #fff1f2 !important; }
 
-    /* Event Badge Style */
+    /* Event Badge */
     .event-badge { 
       font-size: 10px; padding: 3px 6px; border-radius: 6px; 
       color: white; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
@@ -30,123 +30,131 @@
     #event-modal { transition: opacity 0.3s ease-in-out; }
     .hidden-modal { opacity: 0; pointer-events: none; }
     .show-modal { opacity: 1; pointer-events: auto; }
-
-    /* Custom Checkbox Grid */
-    .service-checkbox:checked + div { border-color: #4f46e5; background-color: #eef2ff; }
   </style>
 </head>
 <body class="h-full gradient-bg p-3 md:p-8 flex flex-col min-h-screen">
-  <div class="max-w-6xl mx-auto w-full flex-grow">
+  <div class="max-w-4xl mx-auto w-full flex-grow">
     
     <div class="text-center text-white mb-8">
-      <h1 class="text-2xl md:text-4xl font-bold mb-2">แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์</h1>
-      <p class="opacity-80 text-lg">งานสื่อสารองค์กร ฝ่ายทรัพยากรบุคคล
-โรงพยาบาลศูนย์การแพทย์มหาวิทยาลัยแม่ฟ้าหลวง</p>
+      <h1 class="text-2xl md:text-3xl font-bold mb-2">แบบฟอร์มขออนุเคราะห์ประชาสัมพันธ์</h1>
+      <p class="opacity-90 text-base font-light">งานสื่อสารองค์กร ฝ่ายทรัพยากรบุคคล โรงพยาบาลศูนย์การแพทย์มหาวิทยาลัยแม่ฟ้าหลวง</p>
     </div>
 
     <div class="flex justify-center mb-6 sticky top-2 z-20">
-      <div class="bg-white/20 backdrop-blur-md p-1.5 rounded-full flex gap-1 border border-white/30 shadow-xl">
+      <div class="bg-white/20 backdrop-blur-md p-1 rounded-full flex gap-1 border border-white/30 shadow-xl">
         <button onclick="switchTab('book')" id="btn-book" class="px-5 py-2 rounded-full text-sm font-semibold transition-all bg-white text-indigo-700 shadow-sm">📝 ส่งคำขอ</button>
         <button onclick="switchTab('list')" id="btn-list" class="px-5 py-2 rounded-full text-sm font-semibold text-white hover:bg-white/10 transition-all">📅 ปฏิทิน</button>
         <button onclick="switchTab('summary')" id="btn-summary" class="px-5 py-2 rounded-full text-sm font-semibold text-white hover:bg-white/10 transition-all">📊 สรุปงาน</button>
       </div>
     </div>
 
-    <div id="book-section" class="bg-white rounded-3xl shadow-2xl p-5 md:p-8 fade-in">
-      <form id="appointment-form" onsubmit="handleSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div id="book-section" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 fade-in">
+      <form id="appointment-form" onsubmit="handleSubmit(event)" class="space-y-6">
         
-        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <h3 class="md:col-span-2 text-indigo-600 font-bold flex items-center gap-2">👤 ข้อมูลผู้ขอใช้บริการ</h3>
-          <div><label class="text-xs font-bold text-gray-500">ชื่อผู้ประสานงาน *</label><input type="text" name="coordinator_name" required class="w-full mt-1 px-3 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-300 outline-none"></div>
-          <div><label class="text-xs font-bold text-gray-500">หน่วยงาน *</label><input type="text" name="department" required class="w-full mt-1 px-3 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-300 outline-none"></div>
-          <div><label class="text-xs font-bold text-gray-500">เบอร์โทรภายใน *</label><input type="tel" name="phone_internal" required class="w-full mt-1 px-3 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-300 outline-none"></div>
-          <div><label class="text-xs font-bold text-gray-500">หัวข้องาน *</label><input type="text" name="event_title" required class="w-full mt-1 px-3 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-300 outline-none"></div>
-        </div>
-
-        <div class="md:col-span-2">
-          <label class="font-bold text-gray-700 mb-2 block">🛠️ เลือกบริการ (เลือกได้มากกว่า 1 ข้อ)</label>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <label class="cursor-pointer group relative">
-              <input type="checkbox" name="services" value="ถ่ายภาพ" class="service-checkbox peer sr-only">
-              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
-                <span class="text-2xl">📸</span><span class="text-xs font-bold text-gray-600">ถ่ายภาพ</span>
-                <div class="w-full h-1 rounded-full bg-blue-500 mt-1"></div>
-              </div>
-            </label>
-            <label class="cursor-pointer group relative">
-              <input type="checkbox" name="services" value="วิดีโอ" class="service-checkbox peer sr-only">
-              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
-                <span class="text-2xl">🎬</span><span class="text-xs font-bold text-gray-600">วิดีโอ</span>
-                <div class="w-full h-1 rounded-full bg-red-500 mt-1"></div>
-              </div>
-            </label>
-            <label class="cursor-pointer group relative">
-              <input type="checkbox" name="services" value="กราฟิก" class="service-checkbox peer sr-only">
-              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
-                <span class="text-2xl">🎨</span><span class="text-xs font-bold text-gray-600">กราฟิก</span>
-                <div class="w-full h-1 rounded-full bg-orange-400 mt-1"></div>
-              </div>
-            </label>
-            <label class="cursor-pointer group relative">
-              <input type="checkbox" name="services" value="เขียนข่าว" class="service-checkbox peer sr-only">
-              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
-                <span class="text-2xl">📝</span><span class="text-xs font-bold text-gray-600">เขียนข่าว</span>
-                <div class="w-full h-1 rounded-full bg-green-500 mt-1"></div>
-              </div>
-            </label>
-            <label class="cursor-pointer group relative">
-              <input type="checkbox" name="services" value="พิธีกร" class="service-checkbox peer sr-only">
-              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
-                <span class="text-2xl">🎤</span><span class="text-xs font-bold text-gray-600">พิธีกร</span>
-                <div class="w-full h-1 rounded-full bg-purple-500 mt-1"></div>
-              </div>
-            </label>
-            <label class="cursor-pointer group relative">
-              <input type="checkbox" name="services" value="Live" class="service-checkbox peer sr-only">
-              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
-                <span class="text-2xl">📡</span><span class="text-xs font-bold text-gray-600">Live</span>
-                <div class="w-full h-1 rounded-full bg-rose-600 mt-1"></div>
-              </div>
-            </label>
-            <label class="cursor-pointer group relative">
-              <input type="checkbox" name="services" value="ของที่ระลึก" class="service-checkbox peer sr-only">
-              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
-                <span class="text-2xl">🎁</span><span class="text-xs font-bold text-gray-600">ของที่ระลึก</span>
-                <div class="w-full h-1 rounded-full bg-pink-400 mt-1"></div>
-              </div>
-            </label>
-            <label class="cursor-pointer group relative">
-              <input type="checkbox" id="other-checkbox" value="อื่นๆ" class="peer sr-only">
-              <div class="p-3 border-2 rounded-xl text-center hover:bg-gray-50 transition-all h-full flex flex-col items-center justify-center gap-1">
-                <span class="text-2xl">✨</span><span class="text-xs font-bold text-gray-600">อื่นๆ</span>
-                <div class="w-full h-1 rounded-full bg-gray-400 mt-1"></div>
-              </div>
-            </label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="md:col-span-2 text-indigo-700 font-semibold border-b pb-2 mb-2">ข้อมูลผู้ขอใช้บริการ</div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ประสานงาน *</label>
+            <input type="text" name="coordinator_name" required class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
           </div>
-          <input type="text" id="services-other" class="hidden mt-3 w-full px-4 py-2 rounded-xl border border-gray-300 text-sm bg-gray-50" placeholder="ระบุบริการอื่นๆ...">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">หน่วยงาน *</label>
+            <input type="text" name="department" required class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรภายใน *</label>
+            <input type="tel" name="phone_internal" required class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">หัวข้องาน *</label>
+            <input type="text" name="event_title" required class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+          </div>
         </div>
 
-        <div class="w-full min-w-0">
-            <label class="text-sm font-bold text-gray-600 mb-1 block">📅 วันที่จัดงาน *</label>
-            <input type="date" name="preferred_date" id="date-input" required class="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-400 appearance-none bg-white">
+        <div>
+          <label class="block text-indigo-700 font-semibold border-b pb-2 mb-3">
+            ขอความอนุเคราะห์ประชาสัมพันธ์ (เลือกได้มากกว่า 1 ข้อ) *
+          </label>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+              <input type="checkbox" name="services" value="บริการถ่ายภาพ" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+              <span class="text-sm text-gray-700">บริการถ่ายภาพ (ไฟล์เก็บ 1 เดือน)</span>
+            </label>
+            <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+              <input type="checkbox" name="services" value="บริการผลิตและตัดต่อวิดีโอ" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+              <span class="text-sm text-gray-700">บริการผลิตและตัดต่อวิดีโอ</span>
+            </label>
+            <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+              <input type="checkbox" name="services" value="บริการออกแบบสื่อประชาสัมพันธ์ออนไลน์" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+              <span class="text-sm text-gray-700">บริการออกแบบสื่อประชาสัมพันธ์ออนไลน์</span>
+            </label>
+            <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+              <input type="checkbox" name="services" value="บริการออกแบบและผลิตสื่อ" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+              <span class="text-sm text-gray-700">บริการออกแบบและผลิตสื่อ (ป้าย, แผ่นพับ)</span>
+            </label>
+            <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+              <input type="checkbox" name="services" value="บริการเผยแพร่ข่าวประชาสัมพันธ์" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+              <span class="text-sm text-gray-700">บริการเผยแพร่ข่าวประชาสัมพันธ์</span>
+            </label>
+            <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+              <input type="checkbox" name="services" value="บริการพิธีกร" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+              <span class="text-sm text-gray-700">บริการพิธีกร</span>
+            </label>
+            <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+              <input type="checkbox" name="services" value="บริการ Live สำหรับจัดกิจกรรม" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+              <span class="text-sm text-gray-700">บริการ Live สำหรับจัดกิจกรรม</span>
+            </label>
+            <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+              <input type="checkbox" name="services" value="บริการของที่ระลึก" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+              <span class="text-sm text-gray-700">บริการของที่ระลึก</span>
+            </label>
+            <div class="md:col-span-2">
+              <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                <input type="checkbox" id="other-checkbox" value="อื่นๆ" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+                <span class="text-sm text-gray-700">บริการอื่นๆ (ระบุบริการอื่นๆ)</span>
+              </label>
+              <input type="text" id="services-other" class="hidden mt-2 w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="โปรดระบุรายละเอียด...">
+            </div>
+          </div>
         </div>
-        
-        <div class="w-full min-w-0">
-            <label class="text-sm font-bold text-gray-600 mb-1 block">⏰ ช่วงเวลา *</label>
-            <div class="flex items-center gap-2">
-                <input type="time" name="start_time" required class="flex-1 min-w-0 px-2 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-400 text-center bg-white appearance-none">
-                <span class="text-gray-400 font-bold">-</span>
-                <input type="time" name="end_time" required class="flex-1 min-w-0 px-2 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-400 text-center bg-white appearance-none">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="w-full min-w-0">
+                <label class="block text-sm font-medium text-gray-700 mb-1">วันที่จัดงาน *</label>
+                <input type="date" name="preferred_date" id="date-input" required class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+            </div>
+            
+            <div class="w-full min-w-0">
+                <label class="block text-sm font-medium text-gray-700 mb-1">ช่วงเวลา *</label>
+                <div class="flex items-center gap-2">
+                    <input type="time" name="start_time" required class="flex-1 min-w-0 px-2 py-2 border border-gray-300 rounded-lg text-center outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                    <span class="text-gray-400">-</span>
+                    <input type="time" name="end_time" required class="flex-1 min-w-0 px-2 py-2 border border-gray-300 rounded-lg text-center outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                </div>
             </div>
         </div>
 
-        <button type="submit" id="submit-btn" class="md:col-span-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold py-4 rounded-2xl hover:shadow-xl hover:scale-[1.01] transition-all duration-300">
-          🚀 ยืนยันส่งคำขอ
+        <div class="bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300">
+           <label class="block text-sm font-medium text-gray-700 mb-2">
+             📂 อัปโหลดไฟล์เอกสารแนบ (ถ้ามี)
+             <span class="text-xs font-normal text-gray-500 ml-1">- สูงสุด 3 ไฟล์ (PDF, DOC, JPG, PNG)</span>
+           </label>
+           <div class="space-y-2">
+             <input type="file" id="file1" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+             <input type="file" id="file2" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+             <input type="file" id="file3" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+           </div>
+        </div>
+
+        <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all transform active:scale-95 flex justify-center items-center gap-2">
+          <span>ยืนยันการจองคิว</span>
         </button>
       </form>
     </div>
 
-    <div id="list-section" class="hidden bg-white rounded-3xl shadow-2xl p-4 md:p-8">
+    <div id="list-section" class="hidden bg-white rounded-2xl shadow-xl p-4 md:p-8">
       <div class="flex justify-between items-center mb-6">
         <h2 id="calendar-month" class="text-xl font-bold text-gray-800 uppercase"></h2>
         <div class="flex gap-2">
@@ -157,17 +165,11 @@
       <div class="overflow-x-auto pb-2">
         <div id="calendar-grid" class="grid grid-cols-7 min-w-[700px] border rounded-xl overflow-hidden shadow-sm"></div>
       </div>
-      <div class="mt-4 flex gap-4 text-xs text-gray-500 flex-wrap justify-center">
-        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-blue-500 rounded-full"></div>ถ่ายภาพ</div>
-        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-red-500 rounded-full"></div>วิดีโอ</div>
-        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-orange-400 rounded-full"></div>กราฟิก</div>
-        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-green-500 rounded-full"></div>ข่าว</div>
-      </div>
     </div>
 
-    <div id="summary-section" class="hidden bg-white rounded-3xl shadow-2xl p-6 md:p-10">
+    <div id="summary-section" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10">
       <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <h2 class="text-2xl font-bold text-gray-800">📊 สรุปสถิติงานประชาสัมพันธ์</h2>
+        <h2 class="text-xl font-bold text-gray-800">📊 สรุปสถิติงานประชาสัมพันธ์</h2>
         <div class="flex gap-2">
             <select id="chart-month" class="border rounded-lg px-3 py-2 text-sm bg-gray-50" onchange="renderCharts()">
                 <option value="all">ทุกเดือน</option>
@@ -182,11 +184,11 @@
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-sm">
-            <h3 class="text-center font-bold text-gray-600 mb-4">🏆 สัดส่วนประเภทงานบริการ</h3>
+            <h3 class="text-center font-bold text-gray-600 mb-4">🏆 ประเภทงานบริการ</h3>
             <canvas id="serviceChart"></canvas>
         </div>
         <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-sm">
-            <h3 class="text-center font-bold text-gray-600 mb-4">🏢 หน่วยงานที่ขอใช้บริการสูงสุด</h3>
+            <h3 class="text-center font-bold text-gray-600 mb-4">🏢 หน่วยงานที่ขอใช้บริการ</h3>
             <canvas id="deptChart"></canvas>
         </div>
       </div>
@@ -196,7 +198,7 @@
 
   <div id="event-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden-modal">
     <div class="bg-white w-full max-w-md mx-4 rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-100">
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 text-white flex justify-between items-center">
+        <div class="bg-indigo-600 p-4 text-white flex justify-between items-center">
             <h3 class="font-bold text-lg">📌 รายละเอียดงาน</h3>
             <button onclick="closeModal()" class="text-white/80 hover:text-white text-2xl">&times;</button>
         </div>
@@ -223,19 +225,20 @@
   </div>
 
   <script>
-    // ⚠️ ใส่ WEB_APP_URL
+    // ⚠️ Updated WEB_APP_URL
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwBNjqWX1uj6cKX29C0N-UpfZLcZLoq4RfzYNXw1WE8meLz1wnLuzEf2teAd0qJBsFc/exec";
     
-    // --- Configuration: สีประจำบริการ ---
+    // --- Configuration ---
     const serviceColors = {
-        'ถ่ายภาพ': '#3b82f6', // Blue
-        'วิดีโอ': '#ef4444', // Red
-        'กราฟิก': '#f97316', // Orange
-        'เขียนข่าว': '#22c55e', // Green
-        'พิธีกร': '#a855f7', // Purple
-        'Live': '#e11d48', // Rose
-        'ของที่ระลึก': '#ec4899', // Pink
-        'อื่นๆ': '#64748b' // Gray
+        'บริการถ่ายภาพ': '#3b82f6', 
+        'บริการผลิตและตัดต่อวิดีโอ': '#ef4444', 
+        'บริการออกแบบสื่อประชาสัมพันธ์ออนไลน์': '#f97316', 
+        'บริการออกแบบและผลิตสื่อ': '#22c55e', 
+        'บริการเผยแพร่ข่าวประชาสัมพันธ์': '#06b6d4', 
+        'บริการพิธีกร': '#a855f7', 
+        'บริการ Live': '#e11d48', 
+        'บริการของที่ระลึก': '#ec4899', 
+        'อื่นๆ': '#64748b'
     };
 
     let appointments = [];
@@ -243,7 +246,7 @@
     let serviceChartInstance = null;
     let deptChartInstance = null;
 
-    // --- Date Locking & Setup ---
+    // --- Date Setup ---
     const todayDate = new Date();
     const yyyy = todayDate.getFullYear();
     const mm = String(todayDate.getMonth() + 1).padStart(2, '0');
@@ -258,7 +261,7 @@
         }
     });
 
-    // Populate Year Select for Charts
+    // Populate Year Select
     const yearSelect = document.getElementById('chart-year');
     for(let i=yyyy; i>=yyyy-2; i--) {
         const opt = document.createElement('option');
@@ -304,6 +307,11 @@
         }
         if(svcs.length === 0) { alert("เลือกบริการอย่างน้อย 1 ข้อ"); return; }
 
+        let files = []; 
+        for(let i=1; i<=3; i++) { 
+            if(document.getElementById(`file${i}`).files[0]) files.push(document.getElementById(`file${i}`).files[0].name); 
+        }
+
         const payload = {
             coordinator_name: fd.get('coordinator_name'),
             department: fd.get('department'),
@@ -312,11 +320,11 @@
             services: svcs.join(', '),
             preferred_date: selDate,
             time_range: `${fd.get('start_time')} - ${fd.get('end_time')}`,
-            attachment_name: "No File" // Demo purpose
+            attachment_name: files.join(', ') || "ไม่มีไฟล์"
         };
 
         const btn = document.getElementById('submit-btn');
-        btn.disabled = true; btn.innerText = "⏳ กำลังบันทึก...";
+        btn.disabled = true; btn.innerHTML = "<span>⏳ กำลังบันทึก...</span>";
         
         try {
             await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
@@ -325,10 +333,10 @@
             document.getElementById('services-other').classList.add('hidden');
             switchTab('list');
         } catch (err) { 
-            alert("⚠️ ส่งข้อมูลแล้ว ระบบกำลังประมวลผลใน 5-10"); 
+            alert("⚠️ ส่งข้อมูลแล้ว (แต่อาจมีดีเลย์)"); 
             switchTab('list');
         } finally { 
-            btn.disabled = false; btn.innerText = "🚀 ยืนยันดำเนินการส่งคำขอ"; 
+            btn.disabled = false; btn.innerHTML = "<span>ยืนยันการจองคิว</span>"; 
         }
     }
 
@@ -342,13 +350,22 @@
 
     // --- Gradient & Color Logic ---
     function getGradientStyle(serviceString) {
-        const services = serviceString.split(',').map(s => s.trim().split(' ')[0]); // เอาแค่คำแรก
-        let colors = services.map(s => serviceColors[s] || serviceColors['อื่นๆ']);
+        const services = serviceString.split(',').map(s => {
+            // จับคู่ Keyword หลักจากประโยคยาวๆ
+            if(s.includes('ถ่ายภาพ')) return serviceColors['บริการถ่ายภาพ'];
+            if(s.includes('วิดีโอ')) return serviceColors['บริการผลิตและตัดต่อวิดีโอ'];
+            if(s.includes('ออนไลน์')) return serviceColors['บริการออกแบบสื่อประชาสัมพันธ์ออนไลน์'];
+            if(s.includes('ป้าย')) return serviceColors['บริการออกแบบและผลิตสื่อ'];
+            if(s.includes('ข่าว')) return serviceColors['บริการเผยแพร่ข่าวประชาสัมพันธ์'];
+            if(s.includes('พิธีกร')) return serviceColors['บริการพิธีกร'];
+            if(s.includes('Live')) return serviceColors['บริการ Live'];
+            if(s.includes('ที่ระลึก')) return serviceColors['บริการของที่ระลึก'];
+            return serviceColors['อื่นๆ'];
+        });
         
-        if (colors.length === 0) return 'background: #64748b';
-        if (colors.length === 1) return `background: ${colors[0]}`;
-        
-        return `background: linear-gradient(135deg, ${colors.join(', ')})`;
+        if (services.length === 0) return 'background: #64748b';
+        if (services.length === 1) return `background: ${services[0]}`;
+        return `background: linear-gradient(135deg, ${services.join(', ')})`;
     }
 
     // --- Calendar Rendering ---
@@ -361,7 +378,7 @@
         const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
         const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
 
-        for (let i = 0; i < firstDay; i++) { grid.appendChild(document.createElement('div')); } // Empty slots
+        for (let i = 0; i < firstDay; i++) { grid.appendChild(document.createElement('div')); }
 
         for (let d = 1; d <= daysInMonth; d++) {
             const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -374,13 +391,11 @@
             
             cell.innerHTML = `<div class="text-xs font-bold text-gray-400 flex justify-between">${d} ${dailyEvents.length>=2 ?'<span class="text-red-500 text-[9px]">เต็ม</span>':''}</div>`;
             
-            dailyEvents.forEach((event, idx) => {
+            dailyEvents.forEach((event) => {
                 const b = document.createElement('div');
                 b.className = "event-badge";
-                b.style = getGradientStyle(event.services); // 🔥 ใส่สีตามบริการ
+                b.style = getGradientStyle(event.services);
                 b.innerHTML = `⏰ ${event.preferred_time || event.time_range.split('-')[0]} | ${event.event_title}`;
-                
-                // Add Click Event for Modal
                 b.onclick = (e) => { e.stopPropagation(); openModal(event); };
                 cell.appendChild(b);
             });
@@ -400,14 +415,23 @@
         document.getElementById('m-dept').innerText = data.department;
         document.getElementById('m-phone').innerText = data.phone_internal;
         
-        // Render Service Tags
         const svcsDiv = document.getElementById('m-services');
         svcsDiv.innerHTML = '';
         data.services.split(',').forEach(s => {
             const span = document.createElement('span');
-            const key = s.trim().split(' ')[0];
+            let color = '#64748b';
+            // Simple keyword matching for colors in modal
+            if(s.includes('ถ่ายภาพ')) color = serviceColors['บริการถ่ายภาพ'];
+            else if(s.includes('วิดีโอ')) color = serviceColors['บริการผลิตและตัดต่อวิดีโอ'];
+            else if(s.includes('ออนไลน์')) color = serviceColors['บริการออกแบบสื่อประชาสัมพันธ์ออนไลน์'];
+            else if(s.includes('ป้าย')) color = serviceColors['บริการออกแบบและผลิตสื่อ'];
+            else if(s.includes('ข่าว')) color = serviceColors['บริการเผยแพร่ข่าวประชาสัมพันธ์'];
+            else if(s.includes('พิธีกร')) color = serviceColors['บริการพิธีกร'];
+            else if(s.includes('Live')) color = serviceColors['บริการ Live'];
+            else if(s.includes('ที่ระลึก')) color = serviceColors['บริการของที่ระลึก'];
+
             span.className = "text-[10px] text-white px-2 py-1 rounded shadow-sm";
-            span.style.backgroundColor = serviceColors[key] || '#64748b';
+            span.style.backgroundColor = color;
             span.innerText = s.trim();
             svcsDiv.appendChild(span);
         });
@@ -425,7 +449,6 @@
         const selMonth = document.getElementById('chart-month').value;
         const selYear = document.getElementById('chart-year').value;
 
-        // Filter Data
         const filtered = appointments.filter(a => {
             const d = new Date(a.preferred_date);
             const mMatch = selMonth === 'all' || (d.getMonth() + 1) == selMonth;
@@ -437,7 +460,16 @@
         const svcStats = {};
         filtered.forEach(a => {
             a.services.split(',').forEach(s => {
-                const key = s.trim().split(' ')[0]; // Group by main keyword
+                let key = 'อื่นๆ';
+                if(s.includes('ถ่ายภาพ')) key = 'บริการถ่ายภาพ';
+                else if(s.includes('วิดีโอ')) key = 'บริการผลิตและตัดต่อวิดีโอ';
+                else if(s.includes('ออนไลน์')) key = 'บริการออกแบบสื่อประชาสัมพันธ์ออนไลน์';
+                else if(s.includes('ป้าย')) key = 'บริการออกแบบและผลิตสื่อ';
+                else if(s.includes('ข่าว')) key = 'บริการเผยแพร่ข่าวประชาสัมพันธ์';
+                else if(s.includes('พิธีกร')) key = 'บริการพิธีกร';
+                else if(s.includes('Live')) key = 'บริการ Live';
+                else if(s.includes('ที่ระลึก')) key = 'บริการของที่ระลึก';
+                
                 svcStats[key] = (svcStats[key] || 0) + 1;
             });
         });
@@ -448,11 +480,9 @@
             deptStats[a.department] = (deptStats[a.department] || 0) + 1;
         });
 
-        // Destroy old charts if exist
         if(serviceChartInstance) serviceChartInstance.destroy();
         if(deptChartInstance) deptChartInstance.destroy();
 
-        // Draw Service Chart (Doughnut)
         const ctx1 = document.getElementById('serviceChart').getContext('2d');
         serviceChartInstance = new Chart(ctx1, {
             type: 'doughnut',
@@ -465,7 +495,6 @@
             }
         });
 
-        // Draw Dept Chart (Bar)
         const ctx2 = document.getElementById('deptChart').getContext('2d');
         deptChartInstance = new Chart(ctx2, {
             type: 'bar',
@@ -482,7 +511,6 @@
         });
     }
 
-    // Init
     fetchData();
   </script>
 </body>
